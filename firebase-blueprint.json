@@ -1,0 +1,106 @@
+{
+  "entities": {
+    "Property": {
+      "title": "Property",
+      "description": "A real estate property listing in Karachi",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "type": { "type": "string", "enum": ["buy", "rent"] },
+        "price": { "type": "number" },
+        "bedrooms": { "type": "number" },
+        "bathrooms": { "type": "number" },
+        "areaSqft": { "type": "number" },
+        "lat": { "type": "number" },
+        "lng": { "type": "number" },
+        "address": { "type": "string" },
+        "images": { 
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "ownerId": { "type": "string" },
+        "status": { "type": "string", "enum": ["available", "sold", "rented"] },
+        "createdAt": { "type": "object" },
+        "updatedAt": { "type": "object" }
+      },
+      "required": ["title", "type", "price", "lat", "lng", "address", "ownerId", "status", "createdAt", "updatedAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User profile with rating info",
+      "type": "object",
+      "properties": {
+        "displayName": { "type": "string" },
+        "email": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "rating": { "type": "number" },
+        "reviewCount": { "type": "number" },
+        "isVerified": { "type": "boolean" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["email", "createdAt"]
+    },
+    "ChatChannel": {
+      "title": "ChatChannel",
+      "description": "A direct messaging channel between two users",
+      "type": "object",
+      "properties": {
+        "propertyId": { "type": "string" },
+        "participants": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "lastMessage": { "type": "string" },
+        "lastMessageAt": { "type": "object" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["propertyId", "participants", "createdAt"]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "A message in a chat channel",
+      "type": "object",
+      "properties": {
+        "text": { "type": "string" },
+        "senderId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["text", "senderId", "createdAt"]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "A review for an agent or seller",
+      "type": "object",
+      "properties": {
+        "rating": { "type": "number" },
+        "text": { "type": "string" },
+        "reviewerId": { "type": "string" },
+        "createdAt": { "type": "object" }
+      },
+      "required": ["rating", "reviewerId", "createdAt"]
+    }
+  },
+  "firestore": {
+    "properties": {
+      "schema": "Property",
+      "description": "Global collection of all property listings"
+    },
+    "users": {
+      "schema": "UserProfile",
+      "description": "Public user profiles"
+    },
+    "chats": {
+      "schema": "ChatChannel",
+      "description": "Direct messaging channels"
+    },
+    "chats/{chatId}/messages": {
+      "schema": "ChatMessage",
+      "description": "Messages within a chat channel"
+    },
+    "users/{userId}/reviews": {
+      "schema": "Review",
+      "description": "Reviews on a specific user"
+    }
+  }
+}

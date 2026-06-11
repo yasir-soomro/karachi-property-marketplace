@@ -1,0 +1,6 @@
+{
+  "name": "Karachi Property Marketplace",
+  "description": "A marketplace for buying, selling, or renting real estate properties in Karachi. Includes advanced search filters, map integration, direct messaging, user ratings, push notifications, and a dark mode interface.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
