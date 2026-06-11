@@ -21,6 +21,7 @@ export type Property = {
   ownerName: string
   ownerRating: number
   status: "available" | "sold" | "rented"
+  amenities?: string[]
 }
 
 const mockProperties: Property[] = [
@@ -37,7 +38,8 @@ const mockProperties: Property[] = [
     images: ["https://picsum.photos/seed/karachi1/800/600"],
     ownerName: "Hasan Zaidi",
     ownerRating: 4.8,
-    status: "available"
+    status: "available",
+    amenities: ["Sea View", "Gym", "Swimming Pool", "24/7 Security", "Backup Generator"]
   },
   {
     id: "2",
@@ -52,7 +54,8 @@ const mockProperties: Property[] = [
     images: ["https://picsum.photos/seed/karachi2/800/600"],
     ownerName: "Jimmy Gupta",
     ownerRating: 4.5,
-    status: "available"
+    status: "available",
+    amenities: ["Garden", "Servant Quarters", "Car Parking", "Balcony"]
   },
   {
     id: "3",
@@ -67,7 +70,8 @@ const mockProperties: Property[] = [
     images: ["https://picsum.photos/seed/karachi3/800/600"],
     ownerName: "Hasan Zaidi",
     ownerRating: 4.8,
-    status: "available"
+    status: "available",
+    amenities: ["Elevator", "Central AC", "CCTV", "Conference Room"]
   },
   {
     id: "4",
@@ -82,7 +86,8 @@ const mockProperties: Property[] = [
     images: ["https://picsum.photos/seed/karachi4/800/600"],
     ownerName: "Ali Khan",
     ownerRating: 3.9,
-    status: "available"
+    status: "available",
+    amenities: ["Park Facing", "Corner Apartment", "Mosque Nearby"]
   }
 ]
 
