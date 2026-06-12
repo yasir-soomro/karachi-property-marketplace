@@ -8,6 +8,8 @@ import { Bed, Bath, Square, Star, MapPin, CheckCircle2, MessageSquare, X, Heart 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 export function PropertyList({ 
   properties, 
@@ -23,6 +25,7 @@ export function PropertyList({
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
   const [compareProperties, setCompareProperties] = useState<Property[]>([])
   const [showCompareDialog, setShowCompareDialog] = useState(false)
+  const [inquirySent, setInquirySent] = useState(false)
 
   const toggleCompare = (property: Property, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -145,7 +148,12 @@ export function PropertyList({
         ))}
       </div>
 
-      <Dialog open={!!selectedProperty} onOpenChange={(open) => !open && setSelectedProperty(null)}>
+      <Dialog open={!!selectedProperty} onOpenChange={(open) => {
+        if (!open) {
+          setSelectedProperty(null)
+          setTimeout(() => setInquirySent(false), 300)
+        }
+      }}>
         <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-background">
           {selectedProperty && (
             <>
@@ -248,23 +256,71 @@ export function PropertyList({
                     </div>
                   )}
 
-                  <div className="bg-muted/50 rounded-xl p-4 flex items-center justify-between border">
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center text-lg font-bold">
+                  <div className="bg-muted/30 rounded-xl p-6 border mt-6">
+                    <div className="flex items-center gap-3 mb-4 pb-4 border-b">
+                      <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-bold">
                         {selectedProperty.ownerName.charAt(0)}
                       </div>
                       <div>
-                        <p className="font-semibold">{selectedProperty.ownerName}</p>
+                        <p className="font-semibold text-lg">{selectedProperty.ownerName}</p>
                         <div className="flex items-center gap-1 text-yellow-500">
-                          <Star className="w-3 h-3 fill-current" />
-                          <span className="text-xs font-medium text-muted-foreground">{selectedProperty.ownerRating} verified rating</span>
+                          <Star className="w-3.5 h-3.5 fill-current" />
+                          <span className="text-sm font-medium text-muted-foreground">{selectedProperty.ownerRating} verified rating</span>
                         </div>
                       </div>
                     </div>
-                    <Button className="gap-2">
-                      <MessageSquare className="w-4 h-4" />
-                      Contact Agent
-                    </Button>
+                    
+                    {inquirySent ? (
+                      <div className="flex flex-col items-center justify-center py-6 text-center animate-in fade-in zoom-in duration-300">
+                        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
+                          <CheckCircle2 className="w-6 h-6 text-green-600" />
+                        </div>
+                        <h4 className="font-bold text-lg">Inquiry Sent!</h4>
+                        <p className="text-muted-foreground text-sm max-w-[250px] mt-1">
+                          The property owner will get back to you shortly.
+                        </p>
+                        <Button 
+                          variant="outline" 
+                          className="mt-4" 
+                          onClick={() => setInquirySent(false)}
+                        >
+                          Send another message
+                        </Button>
+                      </div>
+                    ) : (
+                      <>
+                        <h4 className="font-semibold text-base mb-4">Send an Inquiry</h4>
+                        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setInquirySent(true) }}>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                              <label className="text-sm font-medium text-foreground">Name *</label>
+                              <Input placeholder="Your Name" required />
+                            </div>
+                            <div className="space-y-1.5">
+                              <label className="text-sm font-medium text-foreground">Email *</label>
+                              <Input type="email" placeholder="your@email.com" required />
+                            </div>
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-foreground">Phone (Optional)</label>
+                            <Input type="tel" placeholder="Your Phone Number" />
+                          </div>
+                          <div className="space-y-1.5">
+                            <label className="text-sm font-medium text-foreground">Message *</label>
+                            <Textarea 
+                              placeholder="I am interested in this property..." 
+                              className="min-h-[100px] resize-y" 
+                              required 
+                              defaultValue={`Hi ${selectedProperty.ownerName}, I'm interested in the property located at ${selectedProperty.address}. Please contact me as soon as possible.`}
+                            />
+                          </div>
+                          <Button type="submit" className="w-full gap-2 mt-2" size="lg">
+                            <MessageSquare className="w-4 h-4" />
+                            Send Message
+                          </Button>
+                        </form>
+                      </>
+                    )}
                   </div>
                 </div>
               </ScrollArea>
