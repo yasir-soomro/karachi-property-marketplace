@@ -9,13 +9,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export function PropertyList({ properties }: { properties: Property[] }) {
+export function PropertyList({ properties, onReset }: { properties: Property[], onReset?: () => void }) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
 
   if (properties.length === 0) {
     return (
-      <div className="h-full flex items-center justify-center text-muted-foreground py-20">
-        No properties found matching your criteria.
+      <div className="h-full min-h-[400px] flex flex-col gap-4 items-center justify-center text-center">
+        <div className="bg-muted w-16 h-16 rounded-full flex items-center justify-center mb-2">
+          <MapPin className="w-8 h-8 text-muted-foreground" />
+        </div>
+        <h3 className="text-xl font-semibold">No properties found</h3>
+        <p className="text-muted-foreground max-w-sm">
+          We couldn't find any properties matching your current search and filter criteria.
+        </p>
+        {onReset && (
+          <Button variant="outline" onClick={onReset} className="mt-2">
+            Clear Filters
+          </Button>
+        )}
       </div>
     )
   }

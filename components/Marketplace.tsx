@@ -96,6 +96,11 @@ export function Marketplace() {
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState<"all" | "buy" | "rent">("all")
 
+  const resetFilters = () => {
+    setSearchQuery("")
+    setTypeFilter("all")
+  }
+
   const filteredProperties = properties.filter(p => {
     if (typeFilter !== "all" && p.type !== typeFilter) return false
     if (searchQuery) {
@@ -159,7 +164,7 @@ export function Marketplace() {
         </div>
 
         <div className="flex-1 w-full relative">
-          <PropertyList properties={filteredProperties} />
+          <PropertyList properties={filteredProperties} onReset={resetFilters} />
         </div>
       </main>
     </div>
