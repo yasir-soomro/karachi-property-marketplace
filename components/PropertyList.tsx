@@ -4,12 +4,22 @@ import { useState } from "react"
 import { Property } from "./Marketplace"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Bed, Bath, Square, Star, MapPin, CheckCircle2, MessageSquare, X } from "lucide-react"
+import { Bed, Bath, Square, Star, MapPin, CheckCircle2, MessageSquare, X, Heart } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
-export function PropertyList({ properties, onReset }: { properties: Property[], onReset?: () => void }) {
+export function PropertyList({ 
+  properties, 
+  onReset,
+  favoriteIds = [],
+  onToggleFavorite
+}: { 
+  properties: Property[], 
+  onReset?: () => void,
+  favoriteIds?: string[],
+  onToggleFavorite?: (id: string) => void
+}) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
   const [compareProperties, setCompareProperties] = useState<Property[]>([])
   const [showCompareDialog, setShowCompareDialog] = useState(false)
@@ -62,7 +72,18 @@ export function PropertyList({ properties, onReset }: { properties: Property[], 
               <Badge className="absolute top-3 left-3 shadow-sm bg-background/80 backdrop-blur-sm text-foreground hover:bg-background/90 border-0">
                 {property.type === "buy" ? "For Sale" : "For Rent"}
               </Badge>
-              <div className="absolute top-3 right-3 z-10">
+              <div className="absolute top-3 right-3 z-10 flex flex-col gap-2 items-end">
+                <Button 
+                  variant="ghost"
+                  size="icon"
+                  className={`h-8 w-8 rounded-full shadow-sm backdrop-blur-sm bg-background/80 hover:bg-background/90 ${favoriteIds.includes(property.id) ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground'}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggleFavorite?.(property.id);
+                  }}
+                >
+                  <Heart className={`w-4 h-4 ${favoriteIds.includes(property.id) ? 'fill-current' : ''}`} />
+                </Button>
                 <Button 
                   variant={compareProperties.find(p => p.id === property.id) ? "default" : "secondary"}
                   size="sm"
@@ -138,7 +159,18 @@ export function PropertyList({ properties, onReset }: { properties: Property[], 
                 <Badge className="absolute top-4 left-4 shadow-md bg-background/90 backdrop-blur-sm text-foreground hover:bg-background/95 border-0 text-sm py-1 px-3">
                   {selectedProperty.type === "buy" ? "For Sale" : "For Rent"}
                 </Badge>
-                <div className="absolute top-4 right-4 z-10">
+                <div className="absolute top-4 right-4 z-10 flex gap-2">
+                  <Button 
+                    variant="ghost"
+                    size="icon"
+                    className={`h-9 w-9 rounded-full shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background ${favoriteIds.includes(selectedProperty.id) ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground'}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleFavorite?.(selectedProperty.id);
+                    }}
+                  >
+                    <Heart className={`w-5 h-5 ${favoriteIds.includes(selectedProperty.id) ? 'fill-current' : ''}`} />
+                  </Button>
                   <Button 
                     variant={compareProperties.find(p => p.id === selectedProperty.id) ? "default" : "secondary"}
                     size="sm"

@@ -5,7 +5,7 @@ import { PropertyList } from "./PropertyList"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Map as MapIcon, MessagesSquare, Bell, User as UserIcon, SlidersHorizontal } from "lucide-react"
+import { Search, Map as MapIcon, MessagesSquare, Bell, User as UserIcon, SlidersHorizontal, Heart } from "lucide-react"
 import { Slider } from "@/components/ui/slider"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
@@ -100,6 +100,8 @@ export function Marketplace() {
   
   const maxPriceByFilter = typeFilter === "rent" ? 500000 : 200000000;
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000000])
+  const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
+  const [favoriteIds, setFavoriteIds] = useState<string[]>([])
 
   useEffect(() => {
     setPriceRange([0, typeFilter === "rent" ? 500000 : 200000000])
@@ -118,6 +120,7 @@ export function Marketplace() {
   }
 
   const filteredProperties = properties.filter(p => {
+    if (showFavoritesOnly && !favoriteIds.includes(p.id)) return false
     if (typeFilter !== "all" && p.type !== typeFilter) return false
     
     if (p.price < priceRange[0] || p.price > priceRange[1]) return false
@@ -169,6 +172,14 @@ export function Marketplace() {
           </div>
           
           <div className="flex gap-2 shrink-0 flex-wrap md:flex-nowrap mt-4 md:mt-0">
+            <Button
+              variant={showFavoritesOnly ? "default" : "outline"}
+              className={`gap-2 shrink-0 ${showFavoritesOnly ? "" : "bg-background"}`}
+              onClick={() => setShowFavoritesOnly(!showFavoritesOnly)}
+            >
+              <Heart className={`w-4 h-4 ${showFavoritesOnly ? "fill-current" : ""}`} />
+              Favorites
+            </Button>
             <Popover>
               <PopoverTrigger render={
                 <Button variant="outline" className="gap-2 bg-background data-[state=open]:bg-muted whitespace-nowrap" />
@@ -213,7 +224,12 @@ export function Marketplace() {
         </div>
 
         <div className="flex-1 w-full relative">
-          <PropertyList properties={filteredProperties} onReset={resetFilters} />
+          <PropertyList 
+            properties={filteredProperties} 
+            onReset={resetFilters} 
+            favoriteIds={favoriteIds}
+            onToggleFavorite={(id) => setFavoriteIds(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])}
+          />
         </div>
       </main>
     </div>
