@@ -22,6 +22,8 @@ export type Property = {
   images: string[]
   ownerName: string
   ownerRating: number
+  propertyRating?: number
+  ratingCount?: number
   status: "available" | "sold" | "rented"
   amenities?: string[]
 }
@@ -40,6 +42,8 @@ const mockProperties: Property[] = [
     images: ["/luxury_apartment.jpg"],
     ownerName: "Hasan Zaidi",
     ownerRating: 4.8,
+    propertyRating: 4.5,
+    ratingCount: 12,
     status: "available",
     amenities: ["Sea View", "Gym", "Swimming Pool", "24/7 Security", "Backup Generator"]
   },
@@ -56,6 +60,8 @@ const mockProperties: Property[] = [
     images: ["/spacious_house.jpg"],
     ownerName: "Jimmy Gupta",
     ownerRating: 4.5,
+    propertyRating: 4.9,
+    ratingCount: 34,
     status: "available",
     amenities: ["Garden", "Servant Quarters", "Car Parking", "Balcony"]
   },
@@ -72,6 +78,8 @@ const mockProperties: Property[] = [
     images: ["/commercial_office.jpg"],
     ownerName: "Hasan Zaidi",
     ownerRating: 4.8,
+    propertyRating: 4.2,
+    ratingCount: 8,
     status: "available",
     amenities: ["Elevator", "Central AC", "CCTV", "Conference Room"]
   },
@@ -88,6 +96,8 @@ const mockProperties: Property[] = [
     images: ["/cozy_flat.jpg"],
     ownerName: "Ali Khan",
     ownerRating: 3.9,
+    propertyRating: 3.8,
+    ratingCount: 5,
     status: "available",
     amenities: ["Park Facing", "Corner Apartment", "Mosque Nearby"]
   }
@@ -102,6 +112,7 @@ export function Marketplace() {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000000])
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
+  const [userRatings, setUserRatings] = useState<Record<string, number>>({})
 
   useEffect(() => {
     setPriceRange([0, typeFilter === "rent" ? 500000 : 200000000])
@@ -229,6 +240,8 @@ export function Marketplace() {
             onReset={resetFilters} 
             favoriteIds={favoriteIds}
             onToggleFavorite={(id) => setFavoriteIds(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])}
+            userRatings={userRatings}
+            onRate={(id, rating) => setUserRatings(prev => ({ ...prev, [id]: rating }))}
           />
         </div>
       </main>

@@ -15,12 +15,16 @@ export function PropertyList({
   properties, 
   onReset,
   favoriteIds = [],
-  onToggleFavorite
+  onToggleFavorite,
+  userRatings = {},
+  onRate
 }: { 
   properties: Property[], 
   onReset?: () => void,
   favoriteIds?: string[],
-  onToggleFavorite?: (id: string) => void
+  onToggleFavorite?: (id: string) => void,
+  userRatings?: Record<string, number>,
+  onRate?: (id: string, rating: number) => void
 }) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
   const [compareProperties, setCompareProperties] = useState<Property[]>([])
@@ -130,6 +134,15 @@ export function PropertyList({
                   <span>{property.areaSqft} sqft</span>
                 </div>
               </div>
+              {property.propertyRating && (
+                <div className="flex items-center gap-1 text-yellow-500 mt-2 text-sm font-medium">
+                  <Star className="w-4 h-4 fill-current" />
+                  <span>{userRatings[property.id] ? ((property.propertyRating * (property.ratingCount || 1) + userRatings[property.id]) / ((property.ratingCount || 1) + 1)).toFixed(1) : property.propertyRating}</span>
+                  <span className="text-muted-foreground font-normal text-xs ml-1">
+                    ({(property.ratingCount || 0) + (userRatings[property.id] ? 1 : 0)})
+                  </span>
+                </div>
+              )}
             </CardContent>
 
             <CardFooter className="p-4 pt-2 border-t mt-2 flex items-center justify-between">
@@ -205,6 +218,44 @@ export function PropertyList({
                       <MapPin className="w-4 h-4" />
                       {selectedProperty.address}
                     </DialogDescription>
+                    
+                    <div className="flex items-center gap-4 mt-3">
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((star) => (
+                          <button
+                            key={star}
+                            className={`p-0.5 transition-colors ${
+                              (userRatings[selectedProperty.id] || 0) >= star
+                                ? "text-yellow-500"
+                                : "text-muted-foreground hover:text-yellow-500/70"
+                            }`}
+                            onClick={() => onRate?.(selectedProperty.id, star)}
+                          >
+                            <Star className={`w-5 h-5 ${
+                              (userRatings[selectedProperty.id] || 0) >= star ? "fill-current" : ""
+                            }`} />
+                          </button>
+                        ))}
+                      </div>
+                      <div className="text-sm">
+                        {userRatings[selectedProperty.id] ? (
+                          <span className="text-muted-foreground">You rated this {userRatings[selectedProperty.id]} stars</span>
+                        ) : (
+                          <span className="text-muted-foreground">Rate this property</span>
+                        )}
+                      </div>
+                      {selectedProperty.propertyRating && (
+                        <div className="flex items-center gap-1.5 text-sm border-l pl-4">
+                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
+                          <span className="font-medium">
+                            {userRatings[selectedProperty.id] ? ((selectedProperty.propertyRating * (selectedProperty.ratingCount || 1) + userRatings[selectedProperty.id]) / ((selectedProperty.ratingCount || 1) + 1)).toFixed(1) : selectedProperty.propertyRating}
+                          </span>
+                          <span className="text-muted-foreground">
+                            ({(selectedProperty.ratingCount || 0) + (userRatings[selectedProperty.id] ? 1 : 0)} reviews)
+                          </span>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-6 text-sm py-4 border-y">
