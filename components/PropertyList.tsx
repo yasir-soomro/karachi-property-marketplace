@@ -4,13 +4,25 @@ import { useState } from "react"
 import { Property } from "./Marketplace"
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Bed, Bath, Square, Star, MapPin, CheckCircle2, MessageSquare } from "lucide-react"
+import { Bed, Bath, Square, Star, MapPin, CheckCircle2, MessageSquare, X } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 
 export function PropertyList({ properties, onReset }: { properties: Property[], onReset?: () => void }) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+  const [compareProperties, setCompareProperties] = useState<Property[]>([])
+  const [showCompareDialog, setShowCompareDialog] = useState(false)
+
+  const toggleCompare = (property: Property, e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (compareProperties.find(p => p.id === property.id)) {
+      setCompareProperties(prev => prev.filter(p => p.id !== property.id))
+    } else {
+      if (compareProperties.length >= 3) return
+      setCompareProperties(prev => [...prev, property])
+    }
+  }
 
   if (properties.length === 0) {
     return (
@@ -37,7 +49,7 @@ export function PropertyList({ properties, onReset }: { properties: Property[], 
         {properties.map(property => (
           <Card 
             key={property.id} 
-            className="overflow-hidden group hover:border-primary/50 transition-all cursor-pointer hover:shadow-md"
+            className="overflow-hidden group hover:border-primary/50 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
             onClick={() => setSelectedProperty(property)}
           >
             <div className="relative h-48 w-full overflow-hidden bg-muted">
@@ -50,6 +62,16 @@ export function PropertyList({ properties, onReset }: { properties: Property[], 
               <Badge className="absolute top-3 left-3 shadow-sm bg-background/80 backdrop-blur-sm text-foreground hover:bg-background/90 border-0">
                 {property.type === "buy" ? "For Sale" : "For Rent"}
               </Badge>
+              <div className="absolute top-3 right-3 z-10">
+                <Button 
+                  variant={compareProperties.find(p => p.id === property.id) ? "default" : "secondary"}
+                  size="sm"
+                  className={`h-8 shadow-sm backdrop-blur-sm bg-background/80 hover:bg-background/90 font-medium ${compareProperties.find(p => p.id === property.id) ? 'bg-primary text-primary-foreground' : ''}`}
+                  onClick={(e) => toggleCompare(property, e)}
+                >
+                  {compareProperties.find(p => p.id === property.id) ? "Added" : "Compare"}
+                </Button>
+              </div>
             </div>
             
             <CardHeader className="p-4 pb-2">
@@ -116,6 +138,16 @@ export function PropertyList({ properties, onReset }: { properties: Property[], 
                 <Badge className="absolute top-4 left-4 shadow-md bg-background/90 backdrop-blur-sm text-foreground hover:bg-background/95 border-0 text-sm py-1 px-3">
                   {selectedProperty.type === "buy" ? "For Sale" : "For Rent"}
                 </Badge>
+                <div className="absolute top-4 right-4 z-10">
+                  <Button 
+                    variant={compareProperties.find(p => p.id === selectedProperty.id) ? "default" : "secondary"}
+                    size="sm"
+                    className={`h-9 px-4 shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background font-medium ${compareProperties.find(p => p.id === selectedProperty.id) ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
+                    onClick={(e) => toggleCompare(selectedProperty, e)}
+                  >
+                    {compareProperties.find(p => p.id === selectedProperty.id) ? "Added to Compare" : "Add to Compare"}
+                  </Button>
+                </div>
               </div>
               
               <ScrollArea className="max-h-[60vh]">
@@ -206,6 +238,151 @@ export function PropertyList({ properties, onReset }: { properties: Property[], 
               </ScrollArea>
             </>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {compareProperties.length > 0 && (
+        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-background/95 backdrop-blur-md shadow-2xl border rounded-full pl-6 pr-2 py-2 flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300">
+          <div className="flex items-center gap-2">
+            <div className="flex -space-x-2 mr-2">
+              {compareProperties.map((p, i) => (
+                <div key={p.id} className="w-8 h-8 rounded-full border-2 border-background overflow-hidden relative z-10" style={{ zIndex: 10 - i }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={p.images[0]} alt="" className="w-full h-full object-cover" />
+                </div>
+              ))}
+            </div>
+            <span className="font-semibold text-sm">{compareProperties.length}/3 selected</span>
+          </div>
+          
+          <div className="flex items-center gap-2">
+            <Button 
+              size="sm" 
+              onClick={() => setShowCompareDialog(true)}
+              className="rounded-full shadow-sm"
+              disabled={compareProperties.length < 2}
+            >
+              Compare {compareProperties.length < 2 ? '(Need min 2)' : ''}
+            </Button>
+            <Button 
+              size="icon" 
+              variant="ghost" 
+              className="h-8 w-8 rounded-full text-muted-foreground hover:text-foreground" 
+              onClick={() => setCompareProperties([])}
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
+
+      <Dialog open={showCompareDialog} onOpenChange={setShowCompareDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col p-0 overflow-hidden bg-background">
+          <DialogHeader className="p-6 pb-2 shrink-0 border-b">
+            <DialogTitle className="text-2xl font-bold font-sans">Compare Properties</DialogTitle>
+            <DialogDescription>
+              Viewing {compareProperties.length} properties side-by-side
+            </DialogDescription>
+          </DialogHeader>
+          <ScrollArea className="flex-1 px-6 pb-6">
+            <table className="w-full text-sm text-left border-collapse mt-4">
+              <thead>
+                <tr>
+                  <th className="w-[10%] pb-4"></th>
+                  {compareProperties.map(p => (
+                    <th key={p.id} className="w-[30%] pb-4 px-2 align-top font-normal">
+                      <div className="relative h-40 rounded-xl overflow-hidden mb-3 border">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={p.images[0]} alt={p.title} className="w-full h-full object-cover" />
+                        <Button 
+                          size="icon" 
+                          variant="destructive" 
+                          className="absolute top-2 right-2 h-7 w-7 rounded-full shadow-sm" 
+                          onClick={() => {
+                              setCompareProperties(prev => prev.filter(cp => cp.id !== p.id));
+                              if (compareProperties.length <= 2) setShowCompareDialog(false);
+                          }}
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </Button>
+                      </div>
+                      <div className="font-semibold text-base line-clamp-2 leading-tight">{p.title}</div>
+                    </th>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => (
+                    <th key={`empty-h-${i}`} className="w-[30%] pb-4 px-2 align-top">
+                      <div className="h-40 rounded-xl border border-dashed flex items-center justify-center text-muted-foreground bg-muted/30">
+                        <span className="text-sm">Empty Slot</span>
+                      </div>
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody className="divide-y text-sm">
+                <tr>
+                  <td className="py-4 font-medium text-muted-foreground align-top">Price</td>
+                  {compareProperties.map(p => (
+                    <td key={p.id} className="py-4 px-2 font-bold text-primary text-lg align-top">
+                      Rs {p.price.toLocaleString("en-PK")}
+                    </td>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => <td key={`empty-p-${i}`} className="py-4 px-2"></td>)}
+                </tr>
+                <tr>
+                  <td className="py-4 font-medium text-muted-foreground align-top">Type</td>
+                  {compareProperties.map(p => (
+                    <td key={p.id} className="py-4 px-2 capitalize align-top">{p.type}</td>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => <td key={`empty-t-${i}`} className="py-4 px-2"></td>)}
+                </tr>
+                <tr>
+                  <td className="py-4 font-medium text-muted-foreground align-top">Location</td>
+                  {compareProperties.map(p => (
+                    <td key={p.id} className="py-4 px-2 align-top">
+                      <span className="line-clamp-2">{p.address}</span>
+                    </td>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => <td key={`empty-l-${i}`} className="py-4 px-2"></td>)}
+                </tr>
+                <tr>
+                  <td className="py-4 font-medium text-muted-foreground align-top flex items-center h-[53px]">Bedrooms</td>
+                  {compareProperties.map(p => (
+                    <td key={p.id} className="py-4 px-2 align-top">{p.bedrooms} Beds</td>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => <td key={`empty-b-${i}`} className="py-4 px-2"></td>)}
+                </tr>
+                <tr>
+                  <td className="py-4 font-medium text-muted-foreground align-top flex items-center h-[53px]">Bathrooms</td>
+                  {compareProperties.map(p => (
+                    <td key={p.id} className="py-4 px-2 align-top">{p.bathrooms} Baths</td>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => <td key={`empty-bt-${i}`} className="py-4 px-2"></td>)}
+                </tr>
+                <tr>
+                  <td className="py-4 font-medium text-muted-foreground align-top flex items-center h-[53px]">Area</td>
+                  {compareProperties.map(p => (
+                    <td key={p.id} className="py-4 px-2 align-top">{p.areaSqft} sqft</td>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => <td key={`empty-a-${i}`} className="py-4 px-2"></td>)}
+                </tr>
+                <tr>
+                  <td className="py-4 font-medium text-muted-foreground align-top">Amenities</td>
+                  {compareProperties.map(p => (
+                    <td key={p.id} className="py-4 px-2 align-top">
+                      {p.amenities && p.amenities.length > 0 ? (
+                        <ul className="space-y-1">
+                          {p.amenities.map(a => <li key={a} className="flex items-start gap-1.5"><CheckCircle2 className="w-3.5 h-3.5 text-green-500 mt-0.5 shrink-0" /> <span className="leading-tight">{a}</span></li>)}
+                        </ul>
+                      ) : (
+                        <span className="text-muted-foreground">-</span>
+                      )}
+                    </td>
+                  ))}
+                  {Array.from({ length: 3 - compareProperties.length }).map((_, i) => <td key={`empty-am-${i}`} className="py-4 px-2"></td>)}
+                </tr>
+              </tbody>
+            </table>
+          </ScrollArea>
         </DialogContent>
       </Dialog>
     </>
