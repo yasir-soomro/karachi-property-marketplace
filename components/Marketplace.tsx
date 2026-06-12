@@ -98,8 +98,16 @@ export function Marketplace() {
 
   const filteredProperties = properties.filter(p => {
     if (typeFilter !== "all" && p.type !== typeFilter) return false
-    if (searchQuery && !p.address.toLowerCase().includes(searchQuery.toLowerCase()) && !p.title.toLowerCase().includes(searchQuery.toLowerCase())) {
-      return false
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase()
+      const matchAddress = p.address.toLowerCase().includes(q)
+      const matchTitle = p.title.toLowerCase().includes(q)
+      const matchDesc = p.description.toLowerCase().includes(q)
+      const matchAmenities = p.amenities?.some(a => a.toLowerCase().includes(q))
+      
+      if (!matchAddress && !matchTitle && !matchDesc && !matchAmenities) {
+        return false
+      }
     }
     return true
   })
