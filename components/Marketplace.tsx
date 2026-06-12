@@ -1,11 +1,13 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { PropertyList } from "./PropertyList"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, Map as MapIcon, MessagesSquare, Bell, User as UserIcon } from "lucide-react"
+import { Search, Map as MapIcon, MessagesSquare, Bell, User as UserIcon, SlidersHorizontal } from "lucide-react"
+import { Slider } from "@/components/ui/slider"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 
 export type Property = {
   id: string
@@ -95,14 +97,31 @@ export function Marketplace() {
   const [properties] = useState<Property[]>(mockProperties)
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState<"all" | "buy" | "rent">("all")
+  
+  const maxPriceByFilter = typeFilter === "rent" ? 500000 : 200000000;
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000000])
+
+  useEffect(() => {
+    setPriceRange([0, typeFilter === "rent" ? 500000 : 200000000])
+  }, [typeFilter])
 
   const resetFilters = () => {
     setSearchQuery("")
     setTypeFilter("all")
+    setPriceRange([0, maxPriceByFilter])
+  }
+
+  const formatPrice = (value: number) => {
+    if (value >= 10000000) return `${(value / 10000000).toFixed(1)} Crore`
+    if (value >= 100000) return `${(value / 100000).toFixed(1)} Lac`
+    return `Rs ${value.toLocaleString("en-PK")}`
   }
 
   const filteredProperties = properties.filter(p => {
     if (typeFilter !== "all" && p.type !== typeFilter) return false
+    
+    if (p.price < priceRange[0] || p.price > priceRange[1]) return false
+
     if (searchQuery) {
       const q = searchQuery.toLowerCase()
       const matchAddress = p.address.toLowerCase().includes(q)
@@ -149,7 +168,37 @@ export function Marketplace() {
             />
           </div>
           
-          <div className="flex gap-2 shrink-0">
+          <div className="flex gap-2 shrink-0 flex-wrap md:flex-nowrap mt-4 md:mt-0">
+            <Popover>
+              <PopoverTrigger render={
+                <Button variant="outline" className="gap-2 bg-background data-[state=open]:bg-muted whitespace-nowrap" />
+              }>
+                <SlidersHorizontal className="w-4 h-4" />
+                Price: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
+              </PopoverTrigger>
+              <PopoverContent className="w-80">
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <h4 className="font-medium text-sm leading-none">Price Range</h4>
+                    <p className="text-sm text-muted-foreground">Set your minimum and maximum budget.</p>
+                  </div>
+                  <div className="pt-4">
+                    <Slider 
+                      min={0}
+                      max={maxPriceByFilter}
+                      step={typeFilter === "rent" ? 10000 : 1000000}
+                      value={priceRange}
+                      onValueChange={(val: any) => setPriceRange(val as [number, number])}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between text-sm font-medium">
+                    <span>{formatPrice(priceRange[0])}</span>
+                    <span>{formatPrice(priceRange[1])}</span>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
+
             <Select value={typeFilter} onValueChange={(val: any) => setTypeFilter(val)}>
               <SelectTrigger className="w-[120px] bg-background">
                 <SelectValue placeholder="All Types" />
