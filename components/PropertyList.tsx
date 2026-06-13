@@ -27,6 +27,7 @@ export function PropertyList({
   onRate?: (id: string, rating: number) => void
 }) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
+  const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [compareProperties, setCompareProperties] = useState<Property[]>([])
   const [showCompareDialog, setShowCompareDialog] = useState(false)
   const [inquirySent, setInquirySent] = useState(false)
@@ -67,7 +68,10 @@ export function PropertyList({
           <Card 
             key={property.id} 
             className="overflow-hidden group hover:border-primary/50 transition-all duration-300 cursor-pointer hover:shadow-xl hover:-translate-y-1"
-            onClick={() => setSelectedProperty(property)}
+            onClick={() => {
+              setSelectedProperty(property)
+              setActiveImageIndex(0)
+            }}
           >
             <div className="relative h-48 w-full overflow-hidden bg-muted">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -170,37 +174,54 @@ export function PropertyList({
         <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-background">
           {selectedProperty && (
             <>
-              <div className="relative h-64 w-full bg-muted">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={selectedProperty.images[0]} 
-                  alt={selectedProperty.title}
-                  className="object-cover w-full h-full"
-                />
-                <Badge className="absolute top-4 left-4 shadow-md bg-background/90 backdrop-blur-sm text-foreground hover:bg-background/95 border-0 text-sm py-1 px-3">
-                  {selectedProperty.type === "buy" ? "For Sale" : "For Rent"}
-                </Badge>
-                <div className="absolute top-4 right-4 z-10 flex gap-2">
-                  <Button 
-                    variant="ghost"
-                    size="icon"
-                    className={`h-9 w-9 rounded-full shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background ${favoriteIds.includes(selectedProperty.id) ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground'}`}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onToggleFavorite?.(selectedProperty.id);
-                    }}
-                  >
-                    <Heart className={`w-5 h-5 ${favoriteIds.includes(selectedProperty.id) ? 'fill-current' : ''}`} />
-                  </Button>
-                  <Button 
-                    variant={compareProperties.find(p => p.id === selectedProperty.id) ? "default" : "secondary"}
-                    size="sm"
-                    className={`h-9 px-4 shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background font-medium ${compareProperties.find(p => p.id === selectedProperty.id) ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
-                    onClick={(e) => toggleCompare(selectedProperty, e)}
-                  >
-                    {compareProperties.find(p => p.id === selectedProperty.id) ? "Added to Compare" : "Add to Compare"}
-                  </Button>
+              <div className="relative h-64 w-full bg-muted flex flex-col">
+                <div className="flex-1 relative w-full h-full">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img 
+                    src={selectedProperty.images[activeImageIndex]} 
+                    alt={selectedProperty.title}
+                    className="absolute inset-0 w-full h-full object-cover"
+                  />
+                  <Badge className="absolute top-4 left-4 shadow-md bg-background/90 backdrop-blur-sm text-foreground hover:bg-background/95 border-0 text-sm py-1 px-3">
+                    {selectedProperty.type === "buy" ? "For Sale" : "For Rent"}
+                  </Badge>
+                  <div className="absolute top-4 right-4 z-10 flex gap-2">
+                    <Button 
+                      variant="ghost"
+                      size="icon"
+                      className={`h-9 w-9 rounded-full shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background ${favoriteIds.includes(selectedProperty.id) ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground'}`}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFavorite?.(selectedProperty.id);
+                      }}
+                    >
+                      <Heart className={`w-5 h-5 ${favoriteIds.includes(selectedProperty.id) ? 'fill-current' : ''}`} />
+                    </Button>
+                    <Button 
+                      variant={compareProperties.find(p => p.id === selectedProperty.id) ? "default" : "secondary"}
+                      size="sm"
+                      className={`h-9 px-4 shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background font-medium ${compareProperties.find(p => p.id === selectedProperty.id) ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
+                      onClick={(e) => toggleCompare(selectedProperty, e)}
+                    >
+                      {compareProperties.find(p => p.id === selectedProperty.id) ? "Added to Compare" : "Add to Compare"}
+                    </Button>
+                  </div>
                 </div>
+                
+                {selectedProperty.images.length > 1 && (
+                  <div className="w-full absolute bottom-0 left-0 bg-background/80 backdrop-blur-md border-t flex gap-2 overflow-x-auto p-2">
+                    {selectedProperty.images.map((img, i) => (
+                      <button 
+                        key={i} 
+                        onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
+                        className={`relative h-12 w-16 shrink-0 rounded-sm overflow-hidden border-2 transition-all ${activeImageIndex === i ? 'border-primary ring-1 ring-primary/20' : 'border-transparent opacity-60 hover:opacity-100'}`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={img} alt={`Thumbnail ${i}`} className="w-full h-full object-cover" />
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
               
               <ScrollArea className="max-h-[60vh]">

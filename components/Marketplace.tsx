@@ -40,7 +40,11 @@ const mockProperties: Property[] = [
     bathrooms: 4,
     areaSqft: 2000,
     address: "Block 2, Clifton, Karachi",
-    images: ["/luxury_apartment.jpg"],
+    images: [
+      "/luxury_apartment.jpg",
+      "https://picsum.photos/seed/p1a/800/600",
+      "https://picsum.photos/seed/p1b/800/600"
+    ],
     ownerName: "Hasan Zaidi",
     ownerRating: 4.8,
     propertyRating: 4.5,
@@ -58,7 +62,11 @@ const mockProperties: Property[] = [
     bathrooms: 6,
     areaSqft: 4500,
     address: "Khayaban-e-Shahbaz, DHA Phase 6, Karachi",
-    images: ["/spacious_house.jpg"],
+    images: [
+      "/spacious_house.jpg",
+      "https://picsum.photos/seed/p2a/800/600",
+      "https://picsum.photos/seed/p2b/800/600"
+    ],
     ownerName: "Jimmy Gupta",
     ownerRating: 4.5,
     propertyRating: 4.9,
