@@ -152,21 +152,44 @@ export function Marketplace() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <header className="border-b bg-card sticky top-0 z-10">
+      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <h1 className="text-xl font-bold tracking-tight text-primary">Karachi Estates</h1>
+          <div className="flex items-center gap-2 font-bold text-xl mr-6">
+            <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-sm">
+              <MapIcon className="w-5 h-5" />
+            </div>
+            <span className="hidden sm:inline">Karachi Estates</span>
+            <span className="sm:hidden">KE</span>
+          </div>
           
-          <nav className="hidden md:flex items-center space-x-6">
-            <Button variant="ghost" size="sm" className="gap-2">
-              <MessagesSquare className="w-4 h-4" /> Messages
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium absolute left-1/2 -translate-x-1/2">
+            <a href="#" className="text-primary border-b-2 border-primary py-5">Buy</a>
+            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors py-5 border-b-2 border-transparent hover:border-border">Rent</a>
+            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors py-5 border-b-2 border-transparent hover:border-border">Agents</a>
+            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors py-5 border-b-2 border-transparent hover:border-border">Projects</a>
+          </nav>
+
+          <div className="flex items-center space-x-2">
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hidden sm:flex">
+              <MessagesSquare className="w-5 h-5" />
             </Button>
-            <Button variant="ghost" size="sm" className="gap-2">
-              <Bell className="w-4 h-4" /> Alerts
+            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative hidden sm:flex">
+              <Bell className="w-5 h-5" />
+              <span className="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full border-2 border-background"></span>
             </Button>
-            <Button variant="outline" size="sm" className="gap-2">
+            <div className="h-6 w-px bg-border mx-2 hidden sm:block"></div>
+            <Button variant="outline" size="sm" className="gap-2 rounded-full hidden sm:flex">
               <UserIcon className="w-4 h-4" /> Sign In
             </Button>
-          </nav>
+            <Button variant="default" size="sm" className="rounded-full hidden sm:flex">
+              Post Property
+            </Button>
+            
+            {/* Mobile menu button */}
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <SlidersHorizontal className="w-5 h-5" />
+            </Button>
+          </div>
         </div>
       </header>
 
