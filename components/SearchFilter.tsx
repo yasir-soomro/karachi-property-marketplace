@@ -10,6 +10,8 @@ interface SearchFilterProps {
   setSearchQuery: (val: string) => void
   typeFilter: "all" | "buy" | "rent"
   setTypeFilter: (val: "all" | "buy" | "rent") => void
+  categoryFilter: "all" | "apartment" | "house" | "plot" | "commercial"
+  setCategoryFilter: (val: "all" | "apartment" | "house" | "plot" | "commercial") => void
   priceRange: [number, number]
   setPriceRange: (val: [number, number]) => void
   bedroomsFilter: string
@@ -25,6 +27,8 @@ export function SearchFilter({
   setSearchQuery,
   typeFilter,
   setTypeFilter,
+  categoryFilter,
+  setCategoryFilter,
   priceRange,
   setPriceRange,
   bedroomsFilter,
@@ -111,6 +115,19 @@ export function SearchFilter({
             <SelectItem value="all">Any Type</SelectItem>
             <SelectItem value="buy">For Sale</SelectItem>
             <SelectItem value="rent">For Rent</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={categoryFilter} onValueChange={(val: any) => setCategoryFilter(val)}>
+          <SelectTrigger className="w-[140px] bg-background">
+            <SelectValue placeholder="All Properties" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Properties</SelectItem>
+            <SelectItem value="apartment">Apartment</SelectItem>
+            <SelectItem value="house">House</SelectItem>
+            <SelectItem value="plot">Plot</SelectItem>
+            <SelectItem value="commercial">Commercial</SelectItem>
           </SelectContent>
         </Select>
       </div>

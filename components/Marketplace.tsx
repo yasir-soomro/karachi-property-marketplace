@@ -15,6 +15,7 @@ export type Property = {
   title: string
   description: string
   type: "buy" | "rent"
+  category: "apartment" | "house" | "plot" | "commercial"
   price: number
   bedrooms: number
   bathrooms: number
@@ -35,6 +36,7 @@ const mockProperties: Property[] = [
     title: "Luxury Apartment in Clifton",
     description: "Beautiful sea-facing apartment with modern amenities in Clifton, Karachi.",
     type: "buy",
+    category: "apartment",
     price: 45000000,
     bedrooms: 3,
     bathrooms: 4,
@@ -57,6 +59,7 @@ const mockProperties: Property[] = [
     title: "Spacious House in DHA Phase 6",
     description: "Well-maintained 500 sq yards house in a peaceful neighborhood.",
     type: "buy",
+    category: "house",
     price: 125000000,
     bedrooms: 5,
     bathrooms: 6,
@@ -79,6 +82,7 @@ const mockProperties: Property[] = [
     title: "Commercial Office in Saddar",
     description: "Prime location office space perfect for startups and small businesses.",
     type: "rent",
+    category: "commercial",
     price: 150000,
     bedrooms: 0,
     bathrooms: 2,
@@ -97,6 +101,7 @@ const mockProperties: Property[] = [
     title: "Cozy Flat in Gulshan-e-Iqbal",
     description: "2-bedroom flat with convenient access to shopping malls and schools.",
     type: "buy",
+    category: "apartment",
     price: 12000000,
     bedrooms: 2,
     bathrooms: 2,
@@ -116,6 +121,7 @@ export function Marketplace() {
   const [properties] = useState<Property[]>(mockProperties)
   const [searchQuery, setSearchQuery] = useState("")
   const [typeFilter, setTypeFilter] = useState<"all" | "buy" | "rent">("all")
+  const [categoryFilter, setCategoryFilter] = useState<"all" | "apartment" | "house" | "plot" | "commercial">("all")
   const [bedroomsFilter, setBedroomsFilter] = useState<string>("all")
   
   const maxPriceByFilter = typeFilter === "rent" ? 500000 : 200000000;
@@ -131,6 +137,7 @@ export function Marketplace() {
   const resetFilters = () => {
     setSearchQuery("")
     setTypeFilter("all")
+    setCategoryFilter("all")
     setBedroomsFilter("all")
     setPriceRange([0, maxPriceByFilter])
   }
@@ -144,6 +151,7 @@ export function Marketplace() {
   const filteredProperties = properties.filter(p => {
     if (showFavoritesOnly && !favoriteIds.includes(p.id)) return false
     if (typeFilter !== "all" && p.type !== typeFilter) return false
+    if (categoryFilter !== "all" && p.category !== categoryFilter) return false
     if (bedroomsFilter !== "all" && p.bedrooms < parseInt(bedroomsFilter)) return false
     
     if (p.price < priceRange[0] || p.price > priceRange[1]) return false
@@ -211,6 +219,8 @@ export function Marketplace() {
           setSearchQuery={setSearchQuery}
           typeFilter={typeFilter}
           setTypeFilter={setTypeFilter}
+          categoryFilter={categoryFilter}
+          setCategoryFilter={setCategoryFilter}
           priceRange={priceRange}
           setPriceRange={setPriceRange}
           bedroomsFilter={bedroomsFilter}
