@@ -31,92 +31,72 @@ export type Property = {
   amenities?: string[]
 }
 
-const mockProperties: Property[] = [
-  {
-    id: "1",
-    title: "Luxury Apartment in Clifton",
-    description: "Beautiful sea-facing apartment with modern amenities in Clifton, Karachi.",
-    type: "buy",
-    category: "apartment",
-    price: 45000000,
-    bedrooms: 3,
-    bathrooms: 4,
-    areaSqft: 2000,
-    address: "Block 2, Clifton, Karachi",
-    images: [
-      "/luxury_apartment.jpg",
-      "https://picsum.photos/seed/p1a/800/600",
-      "https://picsum.photos/seed/p1b/800/600"
-    ],
-    ownerName: "Hasan Zaidi",
-    ownerRating: 4.8,
-    propertyRating: 4.5,
-    ratingCount: 12,
-    status: "available",
-    amenities: ["Sea View", "Gym", "Swimming Pool", "24/7 Security", "Backup Generator"]
-  },
-  {
-    id: "2",
-    title: "Spacious House in DHA Phase 6",
-    description: "Well-maintained 500 sq yards house in a peaceful neighborhood.",
-    type: "buy",
-    category: "house",
-    price: 125000000,
-    bedrooms: 5,
-    bathrooms: 6,
-    areaSqft: 4500,
-    address: "Khayaban-e-Shahbaz, DHA Phase 6, Karachi",
-    images: [
-      "/spacious_house.jpg",
-      "https://picsum.photos/seed/p2a/800/600",
-      "https://picsum.photos/seed/p2b/800/600"
-    ],
-    ownerName: "Jimmy Gupta",
-    ownerRating: 4.5,
-    propertyRating: 4.9,
-    ratingCount: 34,
-    status: "available",
-    amenities: ["Garden", "Servant Quarters", "Car Parking", "Balcony"]
-  },
-  {
-    id: "3",
-    title: "Commercial Office in Saddar",
-    description: "Prime location office space perfect for startups and small businesses.",
-    type: "rent",
-    category: "commercial",
-    price: 150000,
-    bedrooms: 0,
-    bathrooms: 2,
-    areaSqft: 1200,
-    address: "Saddar Town, Karachi",
-    images: ["/commercial_office.jpg"],
-    ownerName: "Hasan Zaidi",
-    ownerRating: 4.8,
-    propertyRating: 4.2,
-    ratingCount: 8,
-    status: "available",
-    amenities: ["Elevator", "Central AC", "CCTV", "Conference Room"]
-  },
-  {
-    id: "4",
-    title: "Cozy Flat in Gulshan-e-Iqbal",
-    description: "2-bedroom flat with convenient access to shopping malls and schools.",
-    type: "buy",
-    category: "apartment",
-    price: 12000000,
-    bedrooms: 2,
-    bathrooms: 2,
-    areaSqft: 1000,
-    address: "Block 13-A, Gulshan-e-Iqbal, Karachi",
-    images: ["/cozy_flat.jpg"],
-    ownerName: "Ali Khan",
-    ownerRating: 3.9,
-    propertyRating: 3.8,
-    ratingCount: 5,
-    status: "available",
-    amenities: ["Park Facing", "Corner Apartment", "Mosque Nearby"]
+const generateMockProperties = (): Property[] => {
+  const properties: Property[] = [];
+  const locations = [
+    "Clifton, Karachi", "DHA Phase 6, Karachi", "Gulshan-e-Iqbal, Karachi", 
+    "Saddar Town, Karachi", "PECHS, Karachi", "Bahria Town, Karachi", 
+    "Malir Cantt, Karachi", "North Nazimabad, Karachi"
+  ];
+  const types: ("buy" | "rent")[] = ["buy", "rent"];
+  const categories: ("apartment" | "house" | "plot" | "commercial")[] = ["apartment", "house", "commercial", "plot"];
+  const amenitiesList = [
+    "Sea View", "Gym", "Swimming Pool", "24/7 Security", 
+    "Backup Generator", "Garden", "Servant Quarters", "Car Parking", 
+    "Balcony", "Elevator", "Central AC", "CCTV", "Corner", "Park Facing"
+  ];
+  const ownerNames = ["Hasan Zaidi", "Jimmy Gupta", "Ali Khan", "Sarah Ahmed", "Omar Farooq", "Zainab Raza"];
+
+  for (let i = 1; i <= 24; i++) {
+    const type = types[Math.floor(Math.random() * types.length)];
+    const category = categories[Math.floor(Math.random() * categories.length)];
+    const location = locations[Math.floor(Math.random() * locations.length)];
+    
+    // Generate realistic prices
+    let price = 0;
+    if (type === "buy") {
+      price = Math.floor(Math.random() * 200000000) + 15000000; // 1.5Cr to 21.5Cr
+    } else {
+      price = Math.floor(Math.random() * 400000) + 50000; // 50k to 4.5lakh
+    }
+
+    const bedrooms = category === "plot" || category === "commercial" ? 0 : Math.floor(Math.random() * 5) + 1;
+    const bathrooms = category === "plot" ? 0 : category === "commercial" ? Math.floor(Math.random() * 2) + 1 : bedrooms + (Math.floor(Math.random() * 2));
+    const areaSqft = category === "plot" ? (Math.floor(Math.random() * 9) + 2) * 100 : Math.floor(Math.random() * 4000) + 800; // 800 to 4800 sqft
+    
+    const amenitiesCount = Math.floor(Math.random() * 5) + 2;
+    const shuffledAmenities = [...amenitiesList].sort(() => 0.5 - Math.random());
+    const amenities = shuffledAmenities.slice(0, amenitiesCount);
+
+    properties.push({
+      id: i.toString(),
+      title: `${category.charAt(0).toUpperCase() + category.slice(1)} in ${location.split(',')[0]}`,
+      description: `A beautiful ${category} available for ${type} in the prime location of ${location}. It offers great value and basic necessities for comfortable living.`,
+      type,
+      category,
+      price,
+      bedrooms,
+      bathrooms,
+      areaSqft,
+      address: location,
+      images: [
+        `https://picsum.photos/seed/prop${i}a/800/600`,
+        `https://picsum.photos/seed/prop${i}b/800/600`,
+        `https://picsum.photos/seed/prop${i}c/800/600`
+      ],
+      ownerName: ownerNames[Math.floor(Math.random() * ownerNames.length)],
+      ownerRating: parseFloat((Math.random() * 1.5 + 3.5).toFixed(1)), // 3.5 to 5.0
+      propertyRating: parseFloat((Math.random() * 2 + 3.0).toFixed(1)), // 3.0 to 5.0
+      ratingCount: Math.floor(Math.random() * 50),
+      status: "available",
+      amenities
+    });
   }
-]
+  
+  return properties;
+};
+
+const mockProperties: Property[] = generateMockProperties();
 
 export function Marketplace() {
   const [properties] = useState<Property[]>(mockProperties)
