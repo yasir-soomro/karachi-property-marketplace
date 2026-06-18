@@ -18,6 +18,8 @@ interface SearchBarProps {
   setBedroomsFilter: (val: string) => void
   showFavoritesOnly: boolean
   setShowFavoritesOnly: (val: boolean) => void
+  sortBy: "default" | "price-asc" | "price-desc" | "newest"
+  setSortBy: (val: "default" | "price-asc" | "price-desc" | "newest") => void
   maxPriceByFilter: number
   formatPrice: (val: number) => string
 }
@@ -35,6 +37,8 @@ export function SearchBar({
   setBedroomsFilter,
   showFavoritesOnly,
   setShowFavoritesOnly,
+  sortBy,
+  setSortBy,
   maxPriceByFilter,
   formatPrice
 }: SearchBarProps) {
@@ -128,6 +132,18 @@ export function SearchBar({
             <SelectItem value="house">House</SelectItem>
             <SelectItem value="plot">Plot</SelectItem>
             <SelectItem value="commercial">Commercial</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <Select value={sortBy} onValueChange={(val: any) => setSortBy(val)}>
+          <SelectTrigger className="w-[140px] bg-background">
+            <SelectValue placeholder="Sort By" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="default">Default Sort</SelectItem>
+            <SelectItem value="newest">Newest First</SelectItem>
+            <SelectItem value="price-asc">Price: Low to High</SelectItem>
+            <SelectItem value="price-desc">Price: High to Low</SelectItem>
           </SelectContent>
         </Select>
       </div>

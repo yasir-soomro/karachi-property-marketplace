@@ -104,6 +104,7 @@ export function Marketplace() {
   const [typeFilter, setTypeFilter] = useState<"all" | "buy" | "rent">("all")
   const [categoryFilter, setCategoryFilter] = useState<"all" | "apartment" | "house" | "plot" | "commercial">("all")
   const [bedroomsFilter, setBedroomsFilter] = useState<string>("all")
+  const [sortBy, setSortBy] = useState<"default" | "newest" | "price-asc" | "price-desc">("default")
   
   const maxPriceByFilter = typeFilter === "rent" ? 500000 : 200000000;
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000000])
@@ -123,6 +124,7 @@ export function Marketplace() {
     setTypeFilter("all")
     setCategoryFilter("all")
     setBedroomsFilter("all")
+    setSortBy("default")
     setPriceRange([0, maxPriceByFilter])
   }
 
@@ -152,7 +154,16 @@ export function Marketplace() {
       }
     }
     return true
-  })
+  }).sort((a, b) => {
+    if (sortBy === "price-asc") {
+      return a.price - b.price;
+    } else if (sortBy === "price-desc") {
+      return b.price - a.price;
+    } else if (sortBy === "newest") {
+      return parseInt(b.id) - parseInt(a.id);
+    }
+    return 0;
+  });
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
@@ -216,6 +227,8 @@ export function Marketplace() {
           setBedroomsFilter={setBedroomsFilter}
           showFavoritesOnly={showFavoritesOnly}
           setShowFavoritesOnly={setShowFavoritesOnly}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
           maxPriceByFilter={maxPriceByFilter}
           formatPrice={formatPrice}
         />
