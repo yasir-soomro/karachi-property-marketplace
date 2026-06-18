@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react"
 import { PropertyList } from "./PropertyList"
-import { SearchFilter } from "./SearchFilter"
+import { SearchBar } from "./SearchBar"
+import { MessagesDialog } from "./MessagesDialog"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -129,6 +130,9 @@ export function Marketplace() {
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
   const [userRatings, setUserRatings] = useState<Record<string, number>>({})
+  
+  const [isMessagesOpen, setIsMessagesOpen] = useState(false)
+  const [messagesConvId, setMessagesConvId] = useState<string | null>(null)
 
   useEffect(() => {
     setPriceRange([0, typeFilter === "rent" ? 500000 : 200000000])
@@ -190,7 +194,12 @@ export function Marketplace() {
           </nav>
 
           <div className="flex items-center space-x-2">
-            <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground hidden sm:flex">
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-muted-foreground hover:text-foreground hidden sm:flex"
+              onClick={() => setIsMessagesOpen(true)}
+            >
               <MessagesSquare className="w-5 h-5" />
             </Button>
             <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground relative hidden sm:flex">
@@ -214,7 +223,7 @@ export function Marketplace() {
       </header>
 
       <main className="flex-1 container mx-auto px-4 py-6 flex flex-col gap-6">
-        <SearchFilter
+        <SearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           typeFilter={typeFilter}
@@ -239,9 +248,21 @@ export function Marketplace() {
             onToggleFavorite={(id) => setFavoriteIds(prev => prev.includes(id) ? prev.filter(f => f !== id) : [...prev, id])}
             userRatings={userRatings}
             onRate={(id, rating) => setUserRatings(prev => ({ ...prev, [id]: rating }))}
+            onMessageOwner={(propertyId) => {
+              // Open default conversation depending on propertyId (simulated)
+              const convId = propertyId === "1" ? "conv-1" : propertyId === "2" ? "conv-2" : null;
+              setMessagesConvId(convId);
+              setIsMessagesOpen(true);
+            }}
           />
         </div>
       </main>
+
+      <MessagesDialog 
+        open={isMessagesOpen} 
+        onOpenChange={setIsMessagesOpen} 
+        defaultConversationId={messagesConvId}
+      />
     </div>
   )
 }

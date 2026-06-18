@@ -5,7 +5,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Slider } from "@/components/ui/slider"
 import { Search, SlidersHorizontal, Heart, Bed } from "lucide-react"
 
-interface SearchFilterProps {
+interface SearchBarProps {
   searchQuery: string
   setSearchQuery: (val: string) => void
   typeFilter: "all" | "buy" | "rent"
@@ -22,7 +22,7 @@ interface SearchFilterProps {
   formatPrice: (val: number) => string
 }
 
-export function SearchFilter({
+export function SearchBar({
   searchQuery,
   setSearchQuery,
   typeFilter,
@@ -37,13 +37,13 @@ export function SearchFilter({
   setShowFavoritesOnly,
   maxPriceByFilter,
   formatPrice
-}: SearchFilterProps) {
+}: SearchBarProps) {
   return (
     <div className="flex flex-col md:flex-row gap-4 bg-muted/30 p-4 rounded-xl border">
       <div className="relative flex-1">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input 
-          placeholder="Search by neighborhood, DHA, Clifton..." 
+          placeholder="Search by Karachi area, DHA, Clifton..." 
           className="pl-9 bg-background focus-visible:ring-1"
           value={searchQuery}
           onChange={e => setSearchQuery(e.target.value)}

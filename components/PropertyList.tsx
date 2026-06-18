@@ -17,14 +17,16 @@ export function PropertyList({
   favoriteIds = [],
   onToggleFavorite,
   userRatings = {},
-  onRate
+  onRate,
+  onMessageOwner
 }: { 
   properties: Property[], 
   onReset?: () => void,
   favoriteIds?: string[],
   onToggleFavorite?: (id: string) => void,
   userRatings?: Record<string, number>,
-  onRate?: (id: string, rating: number) => void
+  onRate?: (id: string, rating: number) => void,
+  onMessageOwner?: (propertyId: string) => void
 }) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
   const [activeImageIndex, setActiveImageIndex] = useState(0)
@@ -361,7 +363,31 @@ export function PropertyList({
                       </div>
                     ) : (
                       <>
-                        <h4 className="font-semibold text-base mb-4">Send an Inquiry</h4>
+                        <h4 className="font-semibold text-base mb-4">Contact Owner</h4>
+                        <div className="flex gap-4 mb-4">
+                          <Button 
+                            className="flex-1 gap-2" 
+                            size="lg"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (onMessageOwner) onMessageOwner(selectedProperty.id);
+                              setSelectedProperty(null);
+                            }}
+                          >
+                            <MessageSquare className="w-4 h-4" />
+                            Live Chat
+                          </Button>
+                        </div>
+                        <div className="relative">
+                          <div className="absolute inset-0 flex items-center">
+                            <span className="w-full border-t" />
+                          </div>
+                          <div className="relative flex justify-center text-xs uppercase mb-4">
+                            <span className="bg-[#fcfcfc] dark:bg-[#0c0c0d] px-2 text-muted-foreground">
+                              Or drop a message
+                            </span>
+                          </div>
+                        </div>
                         <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setInquirySent(true) }}>
                           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="space-y-1.5">
