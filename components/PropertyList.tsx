@@ -2,15 +2,13 @@
 
 import { useState } from "react"
 import { Property } from "./Marketplace"
-import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Bed, Bath, Square, Star, MapPin, CheckCircle2, MessageSquare, X, Heart } from "lucide-react"
+import { MapPin, X, CheckCircle2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
 import { PropertyCard } from "./PropertyCard"
+import { PropertyDetailsPanel } from "./PropertyDetailsPanel"
 
 export function PropertyList({ 
   properties, 
@@ -30,10 +28,8 @@ export function PropertyList({
   onMessageOwner?: (propertyId: string) => void
 }) {
   const [selectedProperty, setSelectedProperty] = useState<Property | null>(null)
-  const [activeImageIndex, setActiveImageIndex] = useState(0)
   const [compareProperties, setCompareProperties] = useState<Property[]>([])
   const [showCompareDialog, setShowCompareDialog] = useState(false)
-  const [inquirySent, setInquirySent] = useState(false)
 
   const toggleCompare = (property: Property, e: React.MouseEvent) => {
     e.stopPropagation()
@@ -78,271 +74,27 @@ export function PropertyList({
             userRating={userRatings[property.id]}
             onClick={() => {
               setSelectedProperty(property)
-              setActiveImageIndex(0)
             }}
           />
         ))}
       </div>
 
-      <Dialog open={!!selectedProperty} onOpenChange={(open) => {
-        if (!open) {
-          setSelectedProperty(null)
-          setTimeout(() => setInquirySent(false), 300)
-        }
-      }}>
-        <DialogContent className="max-w-2xl p-0 gap-0 overflow-hidden bg-background">
-          {selectedProperty && (
-            <>
-              <div className="relative h-64 w-full bg-muted flex flex-col">
-                <div className="flex-1 relative w-full h-full">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img 
-                    src={selectedProperty.images[activeImageIndex]} 
-                    alt={selectedProperty.title}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                  <Badge className="absolute top-4 left-4 shadow-md bg-background/90 backdrop-blur-sm text-foreground hover:bg-background/95 border-0 text-sm py-1 px-3">
-                    {selectedProperty.type === "buy" ? "For Sale" : "For Rent"}
-                  </Badge>
-                  <div className="absolute top-4 right-4 z-10 flex gap-2">
-                    <Button 
-                      variant="ghost"
-                      size="icon"
-                      className={`h-9 w-9 rounded-full shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background ${favoriteIds.includes(selectedProperty.id) ? 'text-red-500 hover:text-red-600' : 'text-muted-foreground'}`}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onToggleFavorite?.(selectedProperty.id);
-                      }}
-                    >
-                      <Heart className={`w-5 h-5 ${favoriteIds.includes(selectedProperty.id) ? 'fill-current' : ''}`} />
-                    </Button>
-                    <Button 
-                      variant={compareProperties.find(p => p.id === selectedProperty.id) ? "default" : "secondary"}
-                      size="sm"
-                      className={`h-9 px-4 shadow-sm backdrop-blur-sm bg-background/90 hover:bg-background font-medium ${compareProperties.find(p => p.id === selectedProperty.id) ? 'bg-primary text-primary-foreground hover:bg-primary/90' : ''}`}
-                      onClick={(e) => toggleCompare(selectedProperty, e)}
-                    >
-                      {compareProperties.find(p => p.id === selectedProperty.id) ? "Added to Compare" : "Add to Compare"}
-                    </Button>
-                  </div>
-                </div>
-                
-                {selectedProperty.images.length > 1 && (
-                  <div className="w-full absolute bottom-0 left-0 bg-background/80 backdrop-blur-md border-t flex gap-2 overflow-x-auto p-2">
-                    {selectedProperty.images.map((img, i) => (
-                      <button 
-                        key={i} 
-                        onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
-                        className={`relative h-12 w-16 shrink-0 rounded-sm overflow-hidden border-2 transition-all ${activeImageIndex === i ? 'border-primary ring-1 ring-primary/20' : 'border-transparent opacity-60 hover:opacity-100'}`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={img} alt={`Thumbnail ${i}`} className="w-full h-full object-cover" />
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </div>
-              
-              <ScrollArea className="max-h-[60vh]">
-                <div className="p-6 space-y-6">
-                  <div>
-                    <div className="flex justify-between items-start gap-4 mb-2">
-                      <DialogTitle className="text-2xl font-bold font-sans">
-                        {selectedProperty.title}
-                      </DialogTitle>
-                      <div className="text-2xl font-bold text-primary shrink-0">
-                        Rs {selectedProperty.price.toLocaleString("en-PK")}
-                      </div>
-                    </div>
-                    <DialogDescription className="text-base flex items-center gap-1.5 text-muted-foreground">
-                      <MapPin className="w-4 h-4" />
-                      {selectedProperty.address}
-                    </DialogDescription>
-                    
-                    <div className="flex items-center gap-4 mt-3">
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((star) => (
-                          <button
-                            key={star}
-                            className={`p-0.5 transition-colors ${
-                              (userRatings[selectedProperty.id] || 0) >= star
-                                ? "text-yellow-500"
-                                : "text-muted-foreground hover:text-yellow-500/70"
-                            }`}
-                            onClick={() => onRate?.(selectedProperty.id, star)}
-                          >
-                            <Star className={`w-5 h-5 ${
-                              (userRatings[selectedProperty.id] || 0) >= star ? "fill-current" : ""
-                            }`} />
-                          </button>
-                        ))}
-                      </div>
-                      <div className="text-sm">
-                        {userRatings[selectedProperty.id] ? (
-                          <span className="text-muted-foreground">You rated this {userRatings[selectedProperty.id]} stars</span>
-                        ) : (
-                          <span className="text-muted-foreground">Rate this property</span>
-                        )}
-                      </div>
-                      {selectedProperty.propertyRating && (
-                        <div className="flex items-center gap-1.5 text-sm border-l pl-4">
-                          <Star className="w-4 h-4 text-yellow-500 fill-current" />
-                          <span className="font-medium">
-                            {userRatings[selectedProperty.id] ? ((selectedProperty.propertyRating * (selectedProperty.ratingCount || 1) + userRatings[selectedProperty.id]) / ((selectedProperty.ratingCount || 1) + 1)).toFixed(1) : selectedProperty.propertyRating}
-                          </span>
-                          <span className="text-muted-foreground">
-                            ({(selectedProperty.ratingCount || 0) + (userRatings[selectedProperty.id] ? 1 : 0)} reviews)
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-6 text-sm py-4 border-y">
-                    {selectedProperty.bedrooms > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Bed className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-semibold">{selectedProperty.bedrooms}</p>
-                          <p className="text-muted-foreground text-xs uppercase tracking-wider">Bedrooms</p>
-                        </div>
-                      </div>
-                    )}
-                    {selectedProperty.bathrooms > 0 && (
-                      <div className="flex items-center gap-2">
-                        <Bath className="w-5 h-5 text-muted-foreground" />
-                        <div>
-                          <p className="font-semibold">{selectedProperty.bathrooms}</p>
-                          <p className="text-muted-foreground text-xs uppercase tracking-wider">Bathrooms</p>
-                        </div>
-                      </div>
-                    )}
-                    <div className="flex items-center gap-2">
-                      <Square className="w-5 h-5 text-muted-foreground" />
-                      <div>
-                        <p className="font-semibold">{selectedProperty.areaSqft}</p>
-                        <p className="text-muted-foreground text-xs uppercase tracking-wider">Square Feet</p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="font-semibold text-lg mb-2">About this property</h4>
-                    <p className="text-muted-foreground leading-relaxed">
-                      {selectedProperty.description}
-                    </p>
-                  </div>
-
-                  {selectedProperty.amenities && selectedProperty.amenities.length > 0 && (
-                    <div>
-                      <h4 className="font-semibold text-lg mb-3">Amenities</h4>
-                      <div className="grid grid-cols-2 gap-3">
-                        {selectedProperty.amenities.map(amenity => (
-                          <div key={amenity} className="flex items-center gap-2 text-sm text-muted-foreground">
-                            <CheckCircle2 className="w-4 h-4 text-green-500 shrink-0" />
-                            <span>{amenity}</span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="bg-muted/30 rounded-xl p-6 border mt-6">
-                    <div className="flex items-center gap-3 mb-4 pb-4 border-b">
-                      <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center text-xl font-bold">
-                        {selectedProperty.ownerName.charAt(0)}
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">{selectedProperty.ownerName}</p>
-                        <div className="flex items-center gap-1 text-yellow-500">
-                          <Star className="w-3.5 h-3.5 fill-current" />
-                          <span className="text-sm font-medium text-muted-foreground">{selectedProperty.ownerRating} verified rating</span>
-                        </div>
-                      </div>
-                    </div>
-                    
-                    {inquirySent ? (
-                      <div className="flex flex-col items-center justify-center py-6 text-center animate-in fade-in zoom-in duration-300">
-                        <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
-                          <CheckCircle2 className="w-6 h-6 text-green-600" />
-                        </div>
-                        <h4 className="font-bold text-lg">Inquiry Sent!</h4>
-                        <p className="text-muted-foreground text-sm max-w-[250px] mt-1">
-                          The property owner will get back to you shortly.
-                        </p>
-                        <Button 
-                          variant="outline" 
-                          className="mt-4" 
-                          onClick={() => setInquirySent(false)}
-                        >
-                          Send another message
-                        </Button>
-                      </div>
-                    ) : (
-                      <>
-                        <h4 className="font-semibold text-base mb-4">Contact Owner</h4>
-                        <div className="flex gap-4 mb-4">
-                          <Button 
-                            className="flex-1 gap-2" 
-                            size="lg"
-                            onClick={(e) => {
-                              e.preventDefault();
-                              if (onMessageOwner) onMessageOwner(selectedProperty.id);
-                              setSelectedProperty(null);
-                            }}
-                          >
-                            <MessageSquare className="w-4 h-4" />
-                            Live Chat
-                          </Button>
-                        </div>
-                        <div className="relative">
-                          <div className="absolute inset-0 flex items-center">
-                            <span className="w-full border-t" />
-                          </div>
-                          <div className="relative flex justify-center text-xs uppercase mb-4">
-                            <span className="bg-[#fcfcfc] dark:bg-[#0c0c0d] px-2 text-muted-foreground">
-                              Or drop a message
-                            </span>
-                          </div>
-                        </div>
-                        <form className="space-y-4" onSubmit={(e) => { e.preventDefault(); setInquirySent(true) }}>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div className="space-y-1.5">
-                              <label className="text-sm font-medium text-foreground">Name *</label>
-                              <Input placeholder="Your Name" required />
-                            </div>
-                            <div className="space-y-1.5">
-                              <label className="text-sm font-medium text-foreground">Email *</label>
-                              <Input type="email" placeholder="your@email.com" required />
-                            </div>
-                          </div>
-                          <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-foreground">Phone (Optional)</label>
-                            <Input type="tel" placeholder="Your Phone Number" />
-                          </div>
-                          <div className="space-y-1.5">
-                            <label className="text-sm font-medium text-foreground">Message *</label>
-                            <Textarea 
-                              placeholder="I am interested in this property..." 
-                              className="min-h-[100px] resize-y" 
-                              required 
-                              defaultValue={`Hi ${selectedProperty.ownerName}, I'm interested in the property located at ${selectedProperty.address}. Please contact me as soon as possible.`}
-                            />
-                          </div>
-                          <Button type="submit" className="w-full gap-2 mt-2" size="lg">
-                            <MessageSquare className="w-4 h-4" />
-                            Send Message
-                          </Button>
-                        </form>
-                      </>
-                    )}
-                  </div>
-                </div>
-              </ScrollArea>
-            </>
-          )}
-        </DialogContent>
-      </Dialog>
+      <PropertyDetailsPanel
+        property={selectedProperty}
+        open={!!selectedProperty}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedProperty(null)
+          }
+        }}
+        isFavorite={selectedProperty ? favoriteIds.includes(selectedProperty.id) : false}
+        onToggleFavorite={onToggleFavorite}
+        isCompared={selectedProperty ? !!compareProperties.find(p => p.id === selectedProperty.id) : false}
+        onToggleCompare={toggleCompare}
+        userRating={selectedProperty ? userRatings[selectedProperty.id] : undefined}
+        onRate={onRate}
+        onMessageOwner={onMessageOwner}
+      />
 
       {compareProperties.length > 0 && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 bg-background/95 backdrop-blur-md shadow-2xl border rounded-full pl-6 pr-2 py-2 flex items-center gap-6 animate-in slide-in-from-bottom-10 fade-in duration-300">
