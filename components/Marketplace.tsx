@@ -47,25 +47,31 @@ const generateMockProperties = (): Property[] => {
   ];
   const ownerNames = ["Hasan Zaidi", "Jimmy Gupta", "Ali Khan", "Sarah Ahmed", "Omar Farooq", "Zainab Raza"];
 
+  let seed = 1234567;
+  const pseudoRandom = () => {
+    seed = (seed * 9301 + 49297) % 233280;
+    return seed / 233280;
+  };
+
   for (let i = 1; i <= 24; i++) {
-    const type = types[Math.floor(Math.random() * types.length)];
-    const category = categories[Math.floor(Math.random() * categories.length)];
-    const location = locations[Math.floor(Math.random() * locations.length)];
+    const type = types[Math.floor(pseudoRandom() * types.length)];
+    const category = categories[Math.floor(pseudoRandom() * categories.length)];
+    const location = locations[Math.floor(pseudoRandom() * locations.length)];
     
     // Generate realistic prices
     let price = 0;
     if (type === "buy") {
-      price = Math.floor(Math.random() * 200000000) + 15000000; // 1.5Cr to 21.5Cr
+      price = Math.floor(pseudoRandom() * 200000000) + 15000000; // 1.5Cr to 21.5Cr
     } else {
-      price = Math.floor(Math.random() * 400000) + 50000; // 50k to 4.5lakh
+      price = Math.floor(pseudoRandom() * 400000) + 50000; // 50k to 4.5lakh
     }
 
-    const bedrooms = category === "plot" || category === "commercial" ? 0 : Math.floor(Math.random() * 5) + 1;
-    const bathrooms = category === "plot" ? 0 : category === "commercial" ? Math.floor(Math.random() * 2) + 1 : bedrooms + (Math.floor(Math.random() * 2));
-    const areaSqft = category === "plot" ? (Math.floor(Math.random() * 9) + 2) * 100 : Math.floor(Math.random() * 4000) + 800; // 800 to 4800 sqft
+    const bedrooms = category === "plot" || category === "commercial" ? 0 : Math.floor(pseudoRandom() * 5) + 1;
+    const bathrooms = category === "plot" ? 0 : category === "commercial" ? Math.floor(pseudoRandom() * 2) + 1 : bedrooms + (Math.floor(pseudoRandom() * 2));
+    const areaSqft = category === "plot" ? (Math.floor(pseudoRandom() * 9) + 2) * 100 : Math.floor(pseudoRandom() * 4000) + 800; // 800 to 4800 sqft
     
-    const amenitiesCount = Math.floor(Math.random() * 5) + 2;
-    const shuffledAmenities = [...amenitiesList].sort(() => 0.5 - Math.random());
+    const amenitiesCount = Math.floor(pseudoRandom() * 5) + 2;
+    const shuffledAmenities = [...amenitiesList].sort(() => 0.5 - pseudoRandom());
     const amenities = shuffledAmenities.slice(0, amenitiesCount);
 
     properties.push({
@@ -84,10 +90,10 @@ const generateMockProperties = (): Property[] => {
         `https://picsum.photos/seed/prop${i}b/800/600`,
         `https://picsum.photos/seed/prop${i}c/800/600`
       ],
-      ownerName: ownerNames[Math.floor(Math.random() * ownerNames.length)],
-      ownerRating: parseFloat((Math.random() * 1.5 + 3.5).toFixed(1)), // 3.5 to 5.0
-      propertyRating: parseFloat((Math.random() * 2 + 3.0).toFixed(1)), // 3.0 to 5.0
-      ratingCount: Math.floor(Math.random() * 50),
+      ownerName: ownerNames[Math.floor(pseudoRandom() * ownerNames.length)],
+      ownerRating: parseFloat((pseudoRandom() * 1.5 + 3.5).toFixed(1)), // 3.5 to 5.0
+      propertyRating: parseFloat((pseudoRandom() * 2 + 3.0).toFixed(1)), // 3.0 to 5.0
+      ratingCount: Math.floor(pseudoRandom() * 50),
       status: "available",
       amenities
     });

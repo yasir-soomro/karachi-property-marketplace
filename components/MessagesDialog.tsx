@@ -28,8 +28,8 @@ const mockConversations: Conversation[] = [
     ownerName: "Hasan Zaidi",
     propertyTitle: "Luxury Apartment in Clifton",
     messages: [
-      { id: "m1", sender: "user", text: "Hi, is this apartment still available?", timestamp: new Date(Date.now() - 86400000) },
-      { id: "m2", sender: "owner", text: "Hello! Yes, it is still available. Would you like to schedule a visit?", timestamp: new Date(Date.now() - 86000000) },
+      { id: "m1", sender: "user", text: "Hi, is this apartment still available?", timestamp: new Date("2026-06-17T10:00:00Z") },
+      { id: "m2", sender: "owner", text: "Hello! Yes, it is still available. Would you like to schedule a visit?", timestamp: new Date("2026-06-17T10:05:00Z") },
     ]
   },
   {
@@ -38,7 +38,7 @@ const mockConversations: Conversation[] = [
     ownerName: "Jimmy Gupta",
     propertyTitle: "Spacious House in DHA Phase 6",
     messages: [
-      { id: "m3", sender: "user", text: "What is the final price for this house?", timestamp: new Date(Date.now() - 3600000) },
+      { id: "m3", sender: "user", text: "What is the final price for this house?", timestamp: new Date("2026-06-18T09:00:00Z") },
     ]
   }
 ];
@@ -114,7 +114,7 @@ export function MessagesDialog({ open, onOpenChange, defaultConversationId }: Me
   }
 
   const formatTime = (date: Date) => {
-    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+    return date.toLocaleTimeString("en-US", { hour: '2-digit', minute: '2-digit', timeZone: "UTC" })
   }
 
   return (
