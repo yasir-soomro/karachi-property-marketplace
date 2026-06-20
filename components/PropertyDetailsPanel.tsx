@@ -7,12 +7,12 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetDescription,
-} from "@/components/ui/sheet"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog"
 
 export interface PropertyDetailsPanelProps {
   property: Property | null;
@@ -66,10 +66,10 @@ export function PropertyDetailsPanel({
   if (!property) return null;
 
   return (
-    <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-xl md:max-w-2xl p-0 gap-0 overflow-hidden bg-background border-l shadow-2xl z-50">
-        <ScrollArea className="h-full relative">
-          <div className="relative h-72 md:h-80 w-full bg-muted flex flex-col group">
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-[90vw] sm:max-w-xl md:max-w-2xl p-0 gap-0 overflow-hidden bg-background h-[90vh] md:h-[85vh] flex flex-col shadow-2xl rounded-xl z-50">
+        <ScrollArea className="flex-1 w-full">
+          <div className="relative h-64 sm:h-72 w-full bg-muted flex flex-col group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src={property.images[activeImageIndex]} 
@@ -146,20 +146,20 @@ export function PropertyDetailsPanel({
           </div>
           
           <div className="p-6 space-y-6 lg:p-8">
-            <SheetHeader className="text-left">
+            <DialogHeader className="text-left">
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-2">
-                <SheetTitle className="text-2xl md:text-3xl font-bold font-sans">
+                <DialogTitle className="text-2xl md:text-3xl font-bold font-sans">
                   {property.title}
-                </SheetTitle>
+                </DialogTitle>
                 <div className="text-2xl md:text-3xl font-bold text-primary shrink-0">
                   Rs {property.price.toLocaleString("en-PK")}
                 </div>
               </div>
-              <SheetDescription className="text-base flex items-center gap-1.5 text-muted-foreground mt-1">
+              <DialogDescription className="text-base flex items-center gap-1.5 text-muted-foreground mt-1">
                 <MapPin className="w-4 h-4" />
                 {property.address}
-              </SheetDescription>
-            </SheetHeader>
+              </DialogDescription>
+            </DialogHeader>
             
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-1">
@@ -347,7 +347,7 @@ export function PropertyDetailsPanel({
             <div className="h-6"></div>
           </div>
         </ScrollArea>
-      </SheetContent>
-    </Sheet>
+      </DialogContent>
+    </Dialog>
   )
 }
