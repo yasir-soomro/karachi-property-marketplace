@@ -120,6 +120,29 @@ export function Marketplace() {
   
   const [isMessagesOpen, setIsMessagesOpen] = useState(false)
   const [messagesConvId, setMessagesConvId] = useState<string | null>(null)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+    try {
+      const storedFavorites = localStorage.getItem("ke-favorite-properties")
+      if (storedFavorites) {
+        setFavoriteIds(JSON.parse(storedFavorites))
+      }
+    } catch (e) {
+      console.warn("Failed to load favorites from local storage", e)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (mounted) {
+      try {
+        localStorage.setItem("ke-favorite-properties", JSON.stringify(favoriteIds))
+      } catch (e) {
+        console.warn("Failed to save favorites to local storage", e)
+      }
+    }
+  }, [favoriteIds, mounted])
 
   useEffect(() => {
     setPriceRange([0, typeFilter === "rent" ? 500000 : 200000000])
