@@ -4,6 +4,7 @@ import { Bed, Bath, Square, Star, MapPin, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Property } from "./Marketplace"
 import { motion } from "motion/react"
+import { StarRating } from "./StarRating"
 
 interface PropertyCardProps {
   property: Property;
@@ -13,6 +14,7 @@ interface PropertyCardProps {
   onToggleCompare?: (property: Property, e: React.MouseEvent) => void;
   onClick?: () => void;
   userRating?: number;
+  onRate?: (rating: number) => void;
   index?: number;
 }
 
@@ -24,6 +26,7 @@ export function PropertyCard({
   onToggleCompare,
   onClick,
   userRating,
+  onRate,
   index = 0
 }: PropertyCardProps) {
   return (
@@ -106,12 +109,18 @@ export function PropertyCard({
             </div>
           </div>
           {property.propertyRating && (
-            <div className="flex items-center gap-1 text-yellow-500 mt-2 text-sm font-medium">
-              <Star className="w-4 h-4 fill-current" />
-              <span>{userRating ? ((property.propertyRating * (property.ratingCount || 1) + userRating) / ((property.ratingCount || 1) + 1)).toFixed(1) : property.propertyRating}</span>
-              <span className="text-muted-foreground font-normal text-xs ml-1">
-                ({(property.ratingCount || 0) + (userRating ? 1 : 0)})
-              </span>
+            <div className="flex items-center gap-2 mt-auto pt-2" onClick={(e) => e.stopPropagation()}>
+              <StarRating 
+                initialRating={userRating || Math.round(property.propertyRating)} 
+                onRate={onRate}
+                size={16}
+              />
+              <div className="flex items-center text-sm font-medium">
+                <span>{userRating ? ((property.propertyRating * (property.ratingCount || 1) + userRating) / ((property.ratingCount || 1) + 1)).toFixed(1) : property.propertyRating}</span>
+                <span className="text-muted-foreground font-normal text-xs ml-1">
+                  ({(property.ratingCount || 0) + (userRating ? 1 : 0)})
+                </span>
+              </div>
             </div>
           )}
         </CardContent>

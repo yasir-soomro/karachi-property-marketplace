@@ -14,6 +14,7 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog"
 import { motion, AnimatePresence } from "motion/react"
+import { StarRating } from "./StarRating"
 
 export interface PropertyDetailsPanelProps {
   property: Property | null;
@@ -174,21 +175,11 @@ export function PropertyDetailsPanel({
             
             <div className="flex items-center gap-4 mt-3">
               <div className="flex items-center gap-1">
-                {[1, 2, 3, 4, 5].map((star) => (
-                  <button
-                    key={star}
-                    className={`p-0.5 transition-colors ${
-                      (userRating || 0) >= star
-                        ? "text-yellow-500"
-                        : "text-muted-foreground hover:text-yellow-500/70"
-                    }`}
-                    onClick={() => onRate?.(property.id, star)}
-                  >
-                    <Star className={`w-5 h-5 ${
-                      (userRating || 0) >= star ? "fill-current" : ""
-                    }`} />
-                  </button>
-                ))}
+                <StarRating 
+                  initialRating={userRating || 0}
+                  onRate={(rating) => onRate?.(property.id, rating)}
+                  size={20}
+                />
               </div>
               <div className="text-sm">
                 {userRating ? (

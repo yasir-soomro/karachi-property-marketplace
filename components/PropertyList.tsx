@@ -73,6 +73,7 @@ export function PropertyList({
             onToggleFavorite={(id) => onToggleFavorite?.(id)}
             onToggleCompare={(property, e) => toggleCompare(property, e)}
             userRating={userRatings[property.id]}
+            onRate={(rating) => onRate?.(property.id, rating)}
             onClick={() => {
               setSelectedProperty(property)
             }}
