@@ -58,7 +58,7 @@ export function MessagesDialog({ open, onOpenChange, defaultConversationId }: Me
 
   useEffect(() => {
     if (defaultConversationId) {
-      setActiveConvId(defaultConversationId)
+      setTimeout(() => setActiveConvId(defaultConversationId), 0);
     }
   }, [defaultConversationId])
 

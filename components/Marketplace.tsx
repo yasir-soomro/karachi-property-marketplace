@@ -72,8 +72,14 @@ const generateMockProperties = (): Property[] => {
     const areaSqft = category === "plot" ? (Math.floor(pseudoRandom() * 9) + 2) * 100 : Math.floor(pseudoRandom() * 4000) + 800; // 800 to 4800 sqft
     
     const amenitiesCount = Math.floor(pseudoRandom() * 5) + 2;
-    const shuffledAmenities = [...amenitiesList].sort(() => 0.5 - pseudoRandom());
-    const amenities = shuffledAmenities.slice(0, amenitiesCount);
+    const amenities = [];
+    const availableAmenities = [...amenitiesList];
+    for(let j = 0; j < amenitiesCount; j++) {
+      if(availableAmenities.length === 0) break;
+      const index = Math.floor(pseudoRandom() * availableAmenities.length);
+      amenities.push(availableAmenities[index]);
+      availableAmenities.splice(index, 1);
+    }
 
     properties.push({
       id: i.toString(),

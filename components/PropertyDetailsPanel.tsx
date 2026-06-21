@@ -45,8 +45,10 @@ export function PropertyDetailsPanel({
 
   useEffect(() => {
     if (open && property) {
-      setActiveImageIndex(0);
-      setInquirySent(false);
+      setTimeout(() => {
+        setActiveImageIndex(0);
+        setInquirySent(false);
+      }, 0);
     }
   }, [open, property]);
 
