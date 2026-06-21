@@ -4,6 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Slider } from "@/components/ui/slider"
 import { Search, SlidersHorizontal, Heart, Bed } from "lucide-react"
+import { motion } from "motion/react"
 
 interface SearchBarProps {
   searchQuery: string
@@ -43,8 +44,13 @@ export function SearchBar({
   formatPrice
 }: SearchBarProps) {
   return (
-    <div className="flex flex-col md:flex-row gap-4 bg-muted/30 p-4 rounded-xl border">
-      <div className="relative flex-1">
+    <motion.div 
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="flex flex-col lg:flex-row gap-4 bg-muted/30 p-4 rounded-xl border shadow-sm"
+    >
+      <div className="relative flex-1 min-w-[200px]">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input 
           placeholder="Search by Karachi area, DHA, Clifton..." 
@@ -54,7 +60,7 @@ export function SearchBar({
         />
       </div>
       
-      <div className="flex gap-2 shrink-0 flex-wrap md:flex-nowrap mt-4 md:mt-0">
+      <div className="flex gap-2 shrink-0 flex-wrap lg:flex-nowrap">
         <Button
           variant={showFavoritesOnly ? "default" : "outline"}
           className={`gap-2 shrink-0 ${showFavoritesOnly ? "" : "bg-background"}`}
@@ -65,10 +71,10 @@ export function SearchBar({
         </Button>
 
         <Select value={bedroomsFilter} onValueChange={(val) => setBedroomsFilter(val || "all")}>
-          <SelectTrigger className="w-[120px] bg-background gap-2">
+          <SelectTrigger className="w-[110px] bg-background gap-2">
              <div className="flex items-center gap-1.5 whitespace-nowrap overflow-hidden">
                <Bed className="w-4 h-4 shrink-0" />
-               <span className="truncate">{bedroomsFilter === "all" ? "Beds (Any)" : `${bedroomsFilter} Beds`}</span>
+               <span className="truncate">{bedroomsFilter === "all" ? "Beds" : `${bedroomsFilter} Beds`}</span>
              </div>
           </SelectTrigger>
           <SelectContent>
@@ -83,10 +89,12 @@ export function SearchBar({
 
         <Popover>
           <PopoverTrigger render={
-            <Button variant="outline" className="gap-2 bg-background data-[state=open]:bg-muted whitespace-nowrap" />
+            <Button variant="outline" className="gap-2 bg-background data-[state=open]:bg-muted whitespace-nowrap w-[180px] justify-start" />
           }>
-            <SlidersHorizontal className="w-4 h-4" />
-            Price: {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
+            <SlidersHorizontal className="w-4 h-4 shrink-0" />
+            <span className="truncate text-xs sm:text-sm">
+              {formatPrice(priceRange[0])} - {formatPrice(priceRange[1])}
+            </span>
           </PopoverTrigger>
           <PopoverContent className="w-80">
             <div className="space-y-4">
@@ -94,7 +102,7 @@ export function SearchBar({
                 <h4 className="font-medium text-sm leading-none">Price Range</h4>
                 <p className="text-sm text-muted-foreground">Set your minimum and maximum budget.</p>
               </div>
-              <div className="pt-4">
+              <div className="pt-4 px-2">
                 <Slider 
                   min={0}
                   max={maxPriceByFilter}
@@ -112,8 +120,8 @@ export function SearchBar({
         </Popover>
 
         <Select value={typeFilter} onValueChange={(val: any) => setTypeFilter(val)}>
-          <SelectTrigger className="w-[120px] bg-background">
-            <SelectValue placeholder="All Types" />
+          <SelectTrigger className="w-[100px] bg-background">
+            <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">Any Type</SelectItem>
@@ -123,11 +131,11 @@ export function SearchBar({
         </Select>
 
         <Select value={categoryFilter} onValueChange={(val: any) => setCategoryFilter(val)}>
-          <SelectTrigger className="w-[140px] bg-background">
-            <SelectValue placeholder="All Properties" />
+          <SelectTrigger className="w-[120px] bg-background">
+            <SelectValue placeholder="Category" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">All Properties</SelectItem>
+            <SelectItem value="all">All</SelectItem>
             <SelectItem value="apartment">Apartment</SelectItem>
             <SelectItem value="house">House</SelectItem>
             <SelectItem value="plot">Plot</SelectItem>
@@ -136,17 +144,17 @@ export function SearchBar({
         </Select>
 
         <Select value={sortBy} onValueChange={(val: any) => setSortBy(val)}>
-          <SelectTrigger className="w-[140px] bg-background">
+          <SelectTrigger className="w-[130px] bg-background">
             <SelectValue placeholder="Sort By" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="default">Default Sort</SelectItem>
+            <SelectItem value="default">Default</SelectItem>
             <SelectItem value="newest">Newest First</SelectItem>
-            <SelectItem value="price-asc">Price: Low to High</SelectItem>
-            <SelectItem value="price-desc">Price: High to Low</SelectItem>
+            <SelectItem value="price-asc">Price (Low)</SelectItem>
+            <SelectItem value="price-desc">Price (High)</SelectItem>
           </SelectContent>
         </Select>
       </div>
-    </div>
+    </motion.div>
   )
 }

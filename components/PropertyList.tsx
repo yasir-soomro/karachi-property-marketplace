@@ -49,7 +49,7 @@ export function PropertyList({
         </div>
         <h3 className="text-xl font-semibold">No properties found</h3>
         <p className="text-muted-foreground max-w-sm">
-          We couldn't find any properties matching your current search and filter criteria.
+          We couldn&apos;t find any properties matching your current search and filter criteria.
         </p>
         {onReset && (
           <Button variant="outline" onClick={onReset} className="mt-2">
@@ -63,9 +63,10 @@ export function PropertyList({
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {properties.map(property => (
+        {properties.map((property, index) => (
           <PropertyCard 
             key={property.id}
+            index={index}
             property={property}
             isFavorite={favoriteIds.includes(property.id)}
             isCompared={!!compareProperties.find(p => p.id === property.id)}

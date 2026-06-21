@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Map as MapIcon, MessagesSquare, Bell, User as UserIcon, SlidersHorizontal, Heart } from "lucide-react"
 import { Slider } from "@/components/ui/slider"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
+import { motion } from "motion/react"
 
 export type Property = {
   id: string
@@ -114,6 +115,13 @@ export function Marketplace() {
   
   const maxPriceByFilter = typeFilter === "rent" ? 500000 : 200000000;
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 200000000])
+  
+  // We can derive default price range correctly when typeFilter changes
+  const handleTypeFilterChange = (val: "all" | "buy" | "rent") => {
+    setTypeFilter(val)
+    setPriceRange([0, val === "rent" ? 500000 : 200000000])
+  }
+
   const [showFavoritesOnly, setShowFavoritesOnly] = useState(false)
   const [favoriteIds, setFavoriteIds] = useState<string[]>([])
   const [userRatings, setUserRatings] = useState<Record<string, number>>({})
@@ -123,15 +131,19 @@ export function Marketplace() {
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-    try {
-      const storedFavorites = localStorage.getItem("ke-favorite-properties")
-      if (storedFavorites) {
-        setFavoriteIds(JSON.parse(storedFavorites))
+    const init = () => {
+      setMounted(true)
+      try {
+        const storedFavorites = localStorage.getItem("ke-favorite-properties")
+        if (storedFavorites) {
+          setFavoriteIds(JSON.parse(storedFavorites))
+        }
+      } catch (e) {
+        console.warn("Failed to load favorites", e)
       }
-    } catch (e) {
-      console.warn("Failed to load favorites from local storage", e)
-    }
+    };
+    // Defer to avoid synchronous layout cascading during mount
+    setTimeout(init, 0);
   }, [])
 
   useEffect(() => {
@@ -143,10 +155,6 @@ export function Marketplace() {
       }
     }
   }, [favoriteIds, mounted])
-
-  useEffect(() => {
-    setPriceRange([0, typeFilter === "rent" ? 500000 : 200000000])
-  }, [typeFilter])
 
   const resetFilters = () => {
     setSearchQuery("")
@@ -196,7 +204,12 @@ export function Marketplace() {
 
   return (
     <div className="min-h-screen bg-background text-foreground flex flex-col font-sans">
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
+      <motion.header 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+        className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40"
+      >
         <div className="container mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2 font-bold text-xl mr-6">
             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center text-primary-foreground shadow-sm">
@@ -240,14 +253,14 @@ export function Marketplace() {
             </Button>
           </div>
         </div>
-      </header>
+      </motion.header>
 
       <main className="flex-1 container mx-auto px-4 py-6 flex flex-col gap-6">
         <SearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           typeFilter={typeFilter}
-          setTypeFilter={setTypeFilter}
+          setTypeFilter={handleTypeFilterChange}
           categoryFilter={categoryFilter}
           setCategoryFilter={setCategoryFilter}
           priceRange={priceRange}

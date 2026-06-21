@@ -13,6 +13,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
+import { motion, AnimatePresence } from "motion/react"
 
 export interface PropertyDetailsPanelProps {
   property: Property | null;
@@ -145,7 +146,12 @@ export function PropertyDetailsPanel({
             )}
           </div>
           
-          <div className="p-6 space-y-6 lg:p-8">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+            className="p-6 space-y-6 lg:p-8"
+          >
             <DialogHeader className="text-left">
               <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4 mb-2">
                 <DialogTitle className="text-2xl md:text-3xl font-bold font-sans">
@@ -345,7 +351,7 @@ export function PropertyDetailsPanel({
             
             {/* Added spacing at the bottom of inner content to not cut off easily */}
             <div className="h-6"></div>
-          </div>
+          </motion.div>
         </ScrollArea>
       </DialogContent>
     </Dialog>

@@ -4,7 +4,8 @@ import { ScrollArea } from "@/components/ui/scroll-area"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import { Send, ArrowLeft, Building, User } from "lucide-react"
+import { Send, ArrowLeft, Building, User, MessagesSquare } from "lucide-react"
+import { motion, AnimatePresence } from "motion/react"
 
 export type Message = {
   id: string;
@@ -193,38 +194,45 @@ export function MessagesDialog({ open, onOpenChange, defaultConversationId }: Me
                 {/* Messages */}
                 <ScrollArea className="flex-1 p-4 w-full">
                   <div className="flex flex-col gap-4 max-w-2xl mx-auto">
-                    {activeConversation.messages.map((msg, index) => {
-                      const isUser = msg.sender === 'user';
-                      const showAvatar = index === 0 || activeConversation.messages[index - 1].sender !== msg.sender;
-                      
-                      return (
-                        <div key={msg.id} className={`flex gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}>
-                          {!isUser && (
-                            <div className="w-8 shrink-0">
-                              {showAvatar && (
-                                <Avatar className="w-8 h-8 border">
-                                  <AvatarFallback className="text-xs">O</AvatarFallback>
-                                </Avatar>
-                              )}
+                    <AnimatePresence initial={false}>
+                      {activeConversation.messages.map((msg, index) => {
+                        const isUser = msg.sender === 'user';
+                        const showAvatar = index === 0 || activeConversation.messages[index - 1].sender !== msg.sender;
+                        
+                        return (
+                          <motion.div 
+                            key={msg.id}
+                            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            className={`flex gap-2 ${isUser ? 'justify-end' : 'justify-start'}`}
+                          >
+                            {!isUser && (
+                              <div className="w-8 shrink-0">
+                                {showAvatar && (
+                                  <Avatar className="w-8 h-8 border">
+                                    <AvatarFallback className="text-xs">O</AvatarFallback>
+                                  </Avatar>
+                                )}
+                              </div>
+                            )}
+                            <div className={`flex flex-col max-w-[75%] ${isUser ? 'items-end' : 'items-start'}`}>
+                              <div 
+                                className={`p-3 rounded-2xl ${
+                                  isUser 
+                                    ? 'bg-primary text-primary-foreground rounded-tr-sm' 
+                                    : 'bg-muted border rounded-tl-sm'
+                                }`}
+                              >
+                                <p className="text-sm sm:text-base leading-relaxed">{msg.text}</p>
+                              </div>
+                              <span className="text-[10px] text-muted-foreground mt-1 px-1">
+                                {formatTime(msg.timestamp)}
+                              </span>
                             </div>
-                          )}
-                          <div className={`flex flex-col max-w-[75%] ${isUser ? 'items-end' : 'items-start'}`}>
-                            <div 
-                              className={`p-3 rounded-2xl ${
-                                isUser 
-                                  ? 'bg-primary text-primary-foreground rounded-tr-sm' 
-                                  : 'bg-muted border rounded-tl-sm'
-                              }`}
-                            >
-                              <p className="text-sm sm:text-base leading-relaxed">{msg.text}</p>
-                            </div>
-                            <span className="text-[10px] text-muted-foreground mt-1 px-1">
-                              {formatTime(msg.timestamp)}
-                            </span>
-                          </div>
-                        </div>
-                      )
-                    })}
+                          </motion.div>
+                        )
+                      })}
+                    </AnimatePresence>
                   </div>
                 </ScrollArea>
 
@@ -262,25 +270,5 @@ export function MessagesDialog({ open, onOpenChange, defaultConversationId }: Me
         </div>
       </DialogContent>
     </Dialog>
-  )
-}
-
-function MessagesSquare(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
-      <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
-    </svg>
   )
 }
