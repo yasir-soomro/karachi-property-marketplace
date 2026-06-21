@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog"
 import { motion, AnimatePresence } from "motion/react"
 import { StarRating } from "./StarRating"
+import { PriceTrendChart } from "./PriceTrendChart"
 
 export interface PropertyDetailsPanelProps {
   property: Property | null;
@@ -255,6 +256,10 @@ export function PropertyDetailsPanel({
                 </div>
               </div>
             )}
+
+            <div className="mt-8 border-t pt-8">
+              <PriceTrendChart areaName={property.address.split(',')[0]} />
+            </div>
 
             <div className="bg-muted/40 rounded-2xl p-6 border mt-8">
               <div className="flex items-center gap-4 mb-6 pb-6 border-b border-border/50">
