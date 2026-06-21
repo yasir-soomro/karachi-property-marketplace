@@ -70,9 +70,9 @@ export function PropertyDetailsPanel({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[90vw] sm:max-w-xl md:max-w-2xl p-0 gap-0 overflow-hidden bg-background h-[90vh] md:h-[85vh] flex flex-col shadow-2xl rounded-xl z-50">
+      <DialogContent className="max-w-[95vw] sm:max-w-xl md:max-w-3xl lg:max-w-4xl p-0 gap-0 overflow-hidden bg-background h-[90vh] md:h-[85vh] flex flex-col shadow-2xl rounded-xl z-50">
         <ScrollArea className="flex-1 w-full">
-          <div className="relative h-64 sm:h-72 w-full bg-muted flex flex-col group">
+          <div className="relative h-72 sm:h-80 md:h-[450px] w-full bg-muted flex flex-col group">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img 
               src={property.images[activeImageIndex]} 
@@ -133,16 +133,19 @@ export function PropertyDetailsPanel({
 
             {/* Thumbnail Navigation */}
             {property.images.length > 1 && (
-              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-background/60 backdrop-blur-md px-3 py-2 rounded-full z-10">
+              <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 bg-background/60 backdrop-blur-md p-1.5 rounded-xl z-10 w-[90%] md:w-auto md:max-w-[80%] overflow-x-auto [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
                 {property.images.map((img, i) => (
                   <button 
                     key={i} 
                     onClick={(e) => { e.stopPropagation(); setActiveImageIndex(i); }}
-                    className={`w-2 h-2 rounded-full transition-all ${
-                      activeImageIndex === i ? 'bg-primary w-4' : 'bg-foreground/50 hover:bg-foreground/80'
+                    className={`relative w-12 h-12 md:w-16 md:h-16 shrink-0 rounded-lg overflow-hidden transition-all border-2 ${
+                      activeImageIndex === i ? 'border-primary scale-105' : 'border-transparent opacity-70 hover:opacity-100 hover:scale-105'
                     }`}
                     aria-label={`View image ${i + 1}`}
-                  />
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={img} alt={`Thumbnail ${i + 1}`} className="w-full h-full object-cover" />
+                  </button>
                 ))}
               </div>
             )}
