@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Send, ArrowLeft, Building, User, MessagesSquare } from "lucide-react"
 import { motion, AnimatePresence } from "motion/react"
+import { Property } from "./Marketplace"
 
 export type Message = {
   id: string;
@@ -48,19 +49,42 @@ interface MessagesDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   defaultConversationId?: string | null;
+  initialProperty?: Property | null;
 }
 
-export function MessagesDialog({ open, onOpenChange, defaultConversationId }: MessagesDialogProps) {
+export function MessagesDialog({ open, onOpenChange, defaultConversationId, initialProperty }: MessagesDialogProps) {
   const [conversations, setConversations] = useState<Conversation[]>(mockConversations)
   const [activeConvId, setActiveConvId] = useState<string | null>(defaultConversationId || null)
   const [newMessage, setNewMessage] = useState("")
   const scrollRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    if (defaultConversationId) {
+    if (initialProperty && open) {
+      const existingConv = conversations.find(c => c.propertyId === initialProperty.id);
+      if (existingConv) {
+        setTimeout(() => setActiveConvId(existingConv.id), 0);
+      } else {
+        const newConvId = `conv-${initialProperty.id}-${Date.now()}`;
+        const newConv: Conversation = {
+          id: newConvId,
+          propertyId: initialProperty.id,
+          ownerName: initialProperty.ownerName,
+          propertyTitle: initialProperty.title,
+          messages: []
+        };
+        setTimeout(() => {
+          setConversations(prev => {
+            if (prev.some(c => c.propertyId === initialProperty.id)) return prev;
+            return [newConv, ...prev];
+          });
+          setActiveConvId(newConvId);
+        }, 0);
+      }
+    } else if (defaultConversationId && open) {
       setTimeout(() => setActiveConvId(defaultConversationId), 0);
     }
-  }, [defaultConversationId])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [initialProperty, defaultConversationId, open])
 
   useEffect(() => {
     if (scrollRef.current) {

@@ -1,6 +1,6 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Bed, Bath, Square, Star, MapPin, Heart } from "lucide-react"
+import { Bed, Bath, Square, Star, MapPin, Heart, MessagesSquare } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Property } from "./Marketplace"
 import { motion } from "motion/react"
@@ -15,6 +15,7 @@ interface PropertyCardProps {
   onClick?: () => void;
   userRating?: number;
   onRate?: (rating: number) => void;
+  onMessageOwner?: (propertyId: string) => void;
   index?: number;
 }
 
@@ -27,6 +28,7 @@ export function PropertyCard({
   onClick,
   userRating,
   onRate,
+  onMessageOwner,
   index = 0
 }: PropertyCardProps) {
   return (
@@ -125,7 +127,7 @@ export function PropertyCard({
           )}
         </CardContent>
 
-        <CardFooter className="p-4 pt-4 border-t mt-auto flex items-center justify-between bg-muted/20">
+        <CardFooter className="p-4 pt-4 border-t mt-auto flex items-center justify-between bg-muted/20 flex-wrap gap-3">
           <div className="flex items-center gap-2.5">
             <div className="w-7 h-7 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs font-bold">
               {property.ownerName.charAt(0)}
@@ -136,6 +138,19 @@ export function PropertyCard({
               <span className="text-xs font-medium text-foreground">{property.ownerRating}</span>
             </div>
           </div>
+          
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="h-8 gap-1.5 ml-auto text-xs"
+            onClick={(e) => {
+              e.stopPropagation();
+              onMessageOwner?.(property.id);
+            }}
+          >
+            <MessagesSquare className="w-3.5 h-3.5" />
+            Contact
+          </Button>
         </CardFooter>
       </Card>
     </motion.div>

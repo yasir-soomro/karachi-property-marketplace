@@ -134,6 +134,7 @@ export function Marketplace() {
   
   const [isMessagesOpen, setIsMessagesOpen] = useState(false)
   const [messagesConvId, setMessagesConvId] = useState<string | null>(null)
+  const [messageProperty, setMessageProperty] = useState<Property | null>(null)
   const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
@@ -290,7 +291,10 @@ export function Marketplace() {
             userRatings={userRatings}
             onRate={(id, rating) => setUserRatings(prev => ({ ...prev, [id]: rating }))}
             onMessageOwner={(propertyId) => {
-              // Open default conversation depending on propertyId (simulated)
+              const matchedProp = properties.find(p => p.id === propertyId);
+              if (matchedProp) {
+                setMessageProperty(matchedProp);
+              }
               const convId = propertyId === "1" ? "conv-1" : propertyId === "2" ? "conv-2" : null;
               setMessagesConvId(convId);
               setIsMessagesOpen(true);
@@ -303,6 +307,7 @@ export function Marketplace() {
         open={isMessagesOpen} 
         onOpenChange={setIsMessagesOpen} 
         defaultConversationId={messagesConvId}
+        initialProperty={messageProperty}
       />
     </div>
   )

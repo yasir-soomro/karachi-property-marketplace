@@ -74,6 +74,7 @@ export function PropertyList({
             onToggleCompare={(property, e) => toggleCompare(property, e)}
             userRating={userRatings[property.id]}
             onRate={(rating) => onRate?.(property.id, rating)}
+            onMessageOwner={onMessageOwner}
             onClick={() => {
               setSelectedProperty(property)
             }}
