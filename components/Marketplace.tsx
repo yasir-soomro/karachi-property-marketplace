@@ -227,8 +227,19 @@ export function Marketplace() {
           </div>
           
           <nav className="hidden md:flex items-center gap-6 text-sm font-medium absolute left-1/2 -translate-x-1/2">
-            <a href="#" className="text-primary border-b-2 border-primary py-5">Buy</a>
-            <a href="#" className="text-muted-foreground hover:text-foreground transition-colors py-5 border-b-2 border-transparent hover:border-border">Rent</a>
+            <button 
+              onClick={() => setShowFavoritesOnly(false)} 
+              className={`${!showFavoritesOnly ? 'text-primary border-primary' : 'text-muted-foreground border-transparent hover:border-border hover:text-foreground'} transition-colors py-5 border-b-2`}
+            >
+              Marketplace
+            </button>
+            <button 
+              onClick={() => setShowFavoritesOnly(true)} 
+              className={`${showFavoritesOnly ? 'text-primary border-primary' : 'text-muted-foreground border-transparent hover:border-border hover:text-foreground'} transition-colors py-5 border-b-2 flex items-center gap-1.5`}
+            >
+              <Heart className={`w-4 h-4 ${showFavoritesOnly ? 'fill-current' : ''}`} />
+              My Favorites
+            </button>
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors py-5 border-b-2 border-transparent hover:border-border">Agents</a>
             <a href="#" className="text-muted-foreground hover:text-foreground transition-colors py-5 border-b-2 border-transparent hover:border-border">Projects</a>
           </nav>
@@ -263,6 +274,14 @@ export function Marketplace() {
       </motion.header>
 
       <main className="flex-1 container mx-auto px-4 py-6 flex flex-col gap-6">
+        {showFavoritesOnly && (
+          <div className="flex items-center justify-between pb-2 border-b">
+            <h1 className="text-2xl font-bold flex items-center gap-2">
+              <Heart className="w-6 h-6 text-red-500 fill-current" />
+              My Favorites <span className="text-muted-foreground text-sm font-normal ml-2">({favoriteIds.length})</span>
+            </h1>
+          </div>
+        )}
         <SearchBar
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
