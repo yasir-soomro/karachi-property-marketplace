@@ -81,10 +81,37 @@ const generateMockProperties = (): Property[] => {
       availableAmenities.splice(index, 1);
     }
 
+    let images: string[] = [];
+    if (category === "apartment") {
+      images = [
+        `https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=800&q=80&sig=${i}1`,
+        `https://images.unsplash.com/photo-1502672260266-1c1c24240f38?auto=format&fit=crop&w=800&q=80&sig=${i}2`,
+        `https://images.unsplash.com/photo-1560448204-e02f11c3d0e2?auto=format&fit=crop&w=800&q=80&sig=${i}3`
+      ];
+    } else if (category === "house") {
+      images = [
+        `https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80&sig=${i}1`,
+        `https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80&sig=${i}2`,
+        `https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80&sig=${i}3`
+      ];
+    } else if (category === "commercial") {
+      images = [
+        `https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=800&q=80&sig=${i}1`,
+        `https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80&sig=${i}2`,
+        `https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80&sig=${i}3`
+      ];
+    } else {
+      images = [
+        `https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=800&q=80&sig=${i}1`,
+        `https://images.unsplash.com/photo-1524813686514-a57563d77965?auto=format&fit=crop&w=800&q=80&sig=${i}2`,
+        `https://images.unsplash.com/photo-1622383563227-04401ab4e5ea?auto=format&fit=crop&w=800&q=80&sig=${i}3`
+      ];
+    }
+
     properties.push({
       id: i.toString(),
       title: `${category.charAt(0).toUpperCase() + category.slice(1)} in ${location.split(',')[0]}`,
-      description: `A beautiful ${category} available for ${type} in the prime location of ${location}. It offers great value and basic necessities for comfortable living.`,
+      description: `Spectacular ${category} located in the highly sought-after ${location}. This magnificent property features premium finishes, abundant natural light, and offers an unparalleled living or business experience. Perfect for those looking to ${type} a premium space.`,
       type,
       category,
       price,
@@ -92,11 +119,7 @@ const generateMockProperties = (): Property[] => {
       bathrooms,
       areaSqft,
       address: location,
-      images: [
-        `https://picsum.photos/seed/prop${i}a/800/600`,
-        `https://picsum.photos/seed/prop${i}b/800/600`,
-        `https://picsum.photos/seed/prop${i}c/800/600`
-      ],
+      images,
       ownerName: ownerNames[Math.floor(pseudoRandom() * ownerNames.length)],
       ownerRating: parseFloat((pseudoRandom() * 1.5 + 3.5).toFixed(1)), // 3.5 to 5.0
       propertyRating: parseFloat((pseudoRandom() * 2 + 3.0).toFixed(1)), // 3.0 to 5.0

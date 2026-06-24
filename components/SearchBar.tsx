@@ -164,7 +164,33 @@ export function SearchBar({
                   onValueChange={(val: any) => setPriceRange(val as [number, number])}
                 />
               </div>
-              <div className="flex items-center justify-between text-sm font-medium">
+              <div className="flex items-center gap-4 text-sm">
+                <div className="flex-1 space-y-1">
+                  <label className="text-xs font-medium text-muted-foreground">Min Price</label>
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">Rs</span>
+                    <Input 
+                      type="number"
+                      className="h-8 pl-7 text-xs"
+                      value={priceRange[0]}
+                      onChange={(e) => setPriceRange([Math.min(parseInt(e.target.value) || 0, priceRange[1]), priceRange[1]])}
+                    />
+                  </div>
+                </div>
+                <div className="flex-1 space-y-1">
+                  <label className="text-xs font-medium text-muted-foreground">Max Price</label>
+                  <div className="relative">
+                    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-muted-foreground text-xs">Rs</span>
+                    <Input 
+                      type="number" 
+                      className="h-8 pl-7 text-xs"
+                      value={priceRange[1]}
+                      onChange={(e) => setPriceRange([priceRange[0], Math.max(parseInt(e.target.value) || 0, priceRange[0])])}
+                    />
+                  </div>
+                </div>
+              </div>
+              <div className="flex items-center justify-between text-xs font-medium text-muted-foreground pt-1 border-t">
                 <span>{formatPrice(priceRange[0])}</span>
                 <span>{formatPrice(priceRange[1])}</span>
               </div>
