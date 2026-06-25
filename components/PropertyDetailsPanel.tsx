@@ -258,6 +258,37 @@ export function PropertyDetailsPanel({
             )}
 
             <div className="mt-8 border-t pt-8">
+              <h4 className="font-semibold text-xl mb-4">Floor Plans</h4>
+              <div className="bg-muted/30 rounded-xl p-4 border overflow-hidden">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={`https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80`} alt="Floor Plan" className="w-full h-auto object-contain rounded-lg opacity-80 mix-blend-multiply dark:mix-blend-screen" />
+              </div>
+            </div>
+
+            <div className="mt-8 border-t pt-8">
+              <h4 className="font-semibold text-xl mb-4">Property History</h4>
+              <div className="space-y-4 relative before:absolute before:inset-0 before:ml-2.5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-border before:to-transparent">
+                {[
+                  { date: 'Listed', time: '10 days ago', price: `Rs ${property.price.toLocaleString("en-PK")}`, event: 'Listed for sale by agent' },
+                  { date: 'Sold', time: 'Aug 2021', price: `Rs ${(property.price * 0.85).toLocaleString("en-PK")}`, event: 'Sold to current owner' },
+                  { date: 'Built', time: 'Jan 2015', price: '-', event: 'Property construction completed' }
+                ].map((history, i) => (
+                  <div key={i} className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active">
+                    <div className="flex items-center justify-center w-5 h-5 rounded-full border border-primary bg-background shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 shadow" />
+                    <div className="w-[calc(100%-2rem)] md:w-[calc(50%-1.5rem)] p-4 rounded-xl border bg-card shadow-sm">
+                      <div className="flex items-center justify-between space-x-2 mb-1">
+                        <div className="font-bold text-foreground">{history.date}</div>
+                        <time className="font-medium text-xs text-muted-foreground">{history.time}</time>
+                      </div>
+                      <div className="text-muted-foreground text-sm mb-2">{history.event}</div>
+                      <div className="font-medium text-primary text-sm">{history.price}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-8 border-t pt-8">
               <PriceTrendChart areaName={property.address.split(',')[0]} />
             </div>
 
