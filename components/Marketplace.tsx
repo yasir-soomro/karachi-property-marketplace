@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { PropertyList } from "./PropertyList"
 import { SearchBar } from "./SearchBar"
 import { MessagesDialog } from "./MessagesDialog"
+import { PriceTrendChart } from "./PriceTrendChart"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -323,6 +324,11 @@ export function Marketplace() {
                 <Heart className="w-6 h-6 text-red-500 fill-current" />
                 My Favorites <span className="text-muted-foreground text-sm font-normal ml-2">({favoriteIds.length})</span>
               </h1>
+            </div>
+          )}
+          {searchQuery && (
+            <div className="bg-muted/30 p-6 rounded-xl border shadow-sm">
+              <PriceTrendChart areaName={searchQuery} />
             </div>
           )}
           <PropertyList 
